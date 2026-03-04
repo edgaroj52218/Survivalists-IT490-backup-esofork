@@ -99,7 +99,7 @@
         </div>
         <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
         https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
-        <a href="login.html" class="logoutButton">Log out &rarr;</a>
+        <a href="home.html" class="logoutButton">Log out &rarr;</a>
     </div>
 </body>
 </html>
