@@ -48,20 +48,24 @@ function login($username, $password) {
 	$query = array('username' => $username, 'password' => $password);
 	$result = $userCollection->findOne($query);
 
-	if(!empty($result) && password_verify ($password, $user['password'])) { 
+	if(!empty($result) && password_verify($password, $result['password'])) { 
 		echo "User was successfully logged in.";
 
-		$session_key = creatSessionKey(); // session_key is the variable holding generated key
-		expiration = time() + 3600 // Professor Kehoe said to utilize epoch
+		$session_key = createSessionKey(); // session_key is the variable holding generated key
+		$expiration = time() + 3600; // Professor Kehoe said to utilize epoch
 
-		userCollection->updateOne(
-			["username" => $username,
-        	"keySession" => $session_key, // NOTE: keySession is database's session key variable,  session_key is server's variable
-        	"sessionExpiration" => expiration
-			]
+		$userCollection->updateOne(
+			["username" => $username],
+        		['$set' => [
+				"keySession" => $session_key, // NOTE: keySession is database's session key variable,  session_key is server's variable
+        			"sessionExpiration" => $expiration
+			]]
 		);
+
+    	return array("status" => 'success', "message" => "User was logged in successfully."
+
 	} else {
-		echo "Credentials were not authenticated.";
+        return array("status" => 'fail', "message" => "Invalid login."
 	}
 }
 
@@ -74,8 +78,10 @@ function requestProcessor($request) {
     switch ($request['type']) {
         case "registration":
             return registration($request['username'], $request['password']);
+	case "login":
+	    return login($request['username'],$request['password']); 
     }
-    return array("returnCode" => '1', "message" => "Server received request and processed");
+    return array("returnCode" => '0', "message" => "Server received request and processed");
 }
 
 $server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
