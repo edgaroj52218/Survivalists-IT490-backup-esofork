@@ -15,6 +15,10 @@ $response = $client->send_request($loginRequest);
 
 $expiration = time() + 3600;
 
+// COOKIES + SESSIONS REFERENCES:
+// 1. https://www.geeksforgeeks.org/computer-networks/session-vs-token-based-authentication/ 
+// 2. https://www.php.net/manual/en/function.setcookie.php
+
 if($response['returnCode'] == '0') {
 	setcookie("SessionKey", $response['session_key'], $expiration);
 	echo 'Login success!';
