@@ -1,5 +1,5 @@
 <?php
-	if (!isset($_COOKIE['SessionKey'])) {
+	if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
 		header('Location: login.html');
 		exit();
 	}
