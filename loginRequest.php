@@ -21,7 +21,8 @@ $expiration = time() + 3600;
 
 if($response['returnCode'] == '0') {
 	setcookie("SessionKey", $response['session_key'], $expiration);
-	echo 'Login success!';
+	header('Location: dashboard.php');
+	//echo 'Login success!';
 	exit();
 } else {
 	header('Location: login.html');

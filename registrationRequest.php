@@ -27,3 +27,9 @@ echo "<pre>";
 print_r($serverResponse);
 echo "</pre>";
 ?>
+<!DOCTYPE html>
+<html>
+<body>
+<a href="login.html">Go back to the login page.</a>
+</body>
+</html>
