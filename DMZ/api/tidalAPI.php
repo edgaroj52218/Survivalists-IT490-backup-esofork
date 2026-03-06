@@ -29,26 +29,25 @@ function searchArtist($artistName, $countryCode = "US") {
 
    // $url = "https://openapi.tidal.com/v2/searchResults/" . urlencode($artistName) . "?countryCode" . $countryCode . "&explicitFilter=INCLUDES&include=albums";
 
-    $url = "https://openapi.tidal.com/v2/searchResults?query=" . urlencode($artistName) . "&countryCode=US&include=artists";
+    $url = "https://openapi.tidal.com/v2/searchResults/".urlencode($artistName)."?&countryCode=US&include=albums&include=tracks";
 
     $ch = curl_init($url);
 
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer $tokenTidal", "Accept: application/vnd.api.v1+json", "Content-Type: application/vnd.api.v1+json"));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Authorization: Bearer $tokenTidal", "Accept: application/vnd.api+json", "Content-Type: application/vnd.api+json"));
 
     $response = curl_exec($ch);
+	
+curl_close($ch);
 
     if ($response === false) {
         error_log('cURL Error: ' . curl_error($ch));
         exit('Sorry! An error occurred.');
 
-}
-    curl_close($ch);
+    }
 
-    $decodedResponse = json_decode($response, true);
-    print_r($decodedResponse);
-
-    return $decodedResponse;
+    return $response;
 }
 
+?>
