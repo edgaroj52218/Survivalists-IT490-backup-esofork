@@ -30,16 +30,42 @@ function registration($username, $password) {
     }
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
     
-    $userCollection->insertOne(array(
+
+    try { 
+        $userCollection->insertOne(array(
         "username" => $username,
         "password" => $hashedPassword,
         "keySession" => null,
-        "sessionExpiration" => null
+        "sessionExpiration" => null,
+        "library" => [
+                "favoriteTracks" => [ // needs to actively populate array as more tracks are added to favorites
+                    // [
+                    //     "title" => null, 
+                    //     "artist" => null
+                    // ] 
+                ],
+                "favoriteArtists" => [ // needs to actively populate array as more tracks are added to favorites
+                    // [
+                    //     "artist" => null
+                    // ] 
+                ],
+                "favoriteAlbums" => [ // needs to actively populate array as more tracks are added to favorites
+                    // [
+                    //     "album" => null, "year" => null
+                    // ]
+                ]
+        ],
+        "posts" => []
     ));
 
 	print_r(array('returnCode' => '0', 'message' => 'The user was registered.', 'username' => $username, 'password' => $password));
 
     return array("returnCode" => '0', "message" => "The user was registered.");
+    } catch(Exception $e) {
+        print_r(array('returnCode' => '1', 'message' => 'The user was not registered.', 'username' => $username, 'password' => $password));
+
+    return array("returnCode" => '1', $e->getMessage());
+    }
 }
 
 function login($username, $password) {
@@ -48,9 +74,9 @@ function login($username, $password) {
 	$userCollection = $database->reg_users;
 
 	$query = array('username' => $username); // 'password' => $password);
-	$result = $userCollection->findOne($query);
+	$user = $userCollection->findOne($query);
 
-	if($result && password_verify($password, $result['password'])) { 
+	if($user && password_verify($password, $user['password'])) { 
 		echo "User was successfully logged in.";
 
 		$session_key = createSessionKey(); // session_key is the variable holding generated key
@@ -76,6 +102,102 @@ function login($username, $password) {
 	}
 }
 
+// populates postCollection everytime a user posts something
+function createPost($session_key, $content, $postedAt) {
+    global $database;
+
+    $postCollection = $database->posts_db;
+
+    // use session key to identify uniquely logged in user
+    // will search database by session_key and retrieve attached user's username/id
+
+	// logic from login method: $query = array('username' => $username); // 'password' => $password);
+	                         // $user = $userCollection->findOne($query);
+
+    $query = array('keySession' => $session_key);
+	$user = $userCollection->findOne($query);
+
+    $username = $user['username'];
+
+    $postCollection->insertOne(array(
+        "username" => $username,
+        "media" => $media,
+        "content" => $content,
+        "postedAt" => $postedAt,
+    ));
+
+    print_r(array('returnCode' => '0', 'message' => 'The post was created.'));
+
+    return array("returnCode" => '0', "message" => 'The post was created.');
+}
+
+// user profile curation with albums, artists, tracks
+
+
+function addFavoriteTrack($username){
+    global $database;
+
+    $postCollection = $database->reg_users;
+
+    $userCollection->updateOne(array(
+        "username" => $username,
+        "library" => [
+            [
+                "favoriteTracks" => [
+                    [
+                        "title" => $title, 
+                        "artist" => $artist
+                    ] // needs to actively populate array as more tracks are added to favorites
+                ],
+            ]
+        ]
+    ));
+}
+
+function addFavoriteArtist($username){
+    global $database;
+
+    $postCollection = $database->reg_users;
+
+    $userCollection->updateOne(array(
+        "username" => $username,
+        "library" => [
+            [
+                "favoriteArtists" => [
+                    [
+                        "artist" => $artist
+                    ] // needs to actively populate array as more tracks are added to favorites
+                ],
+            ]
+        ]
+    ));
+}
+
+function addFavoriteAlbum($username){
+global $database;
+
+    $postCollection = $database->reg_users;
+
+    $userCollection->updateOne(array(
+        "username" => $username,
+        "library" => [
+            [
+                "favoriteAlbums" => [
+                    [
+                        "album" => $artist, "year" => $year
+                    ],     // needs to actively populate array as more tracks are added to favorites
+                ]
+            ]
+        ]
+    ));
+}
+
+// feedCollection for viewing posts of friends
+function getFeed() {
+
+}
+
+
 function requestProcessor($request) {
     if (!isset($request['type'])) {
         return array("returnCode" => '1', "message" => "This is an invalid request type.");
@@ -85,8 +207,18 @@ function requestProcessor($request) {
     switch ($request['type']) {
         case "registration":
             return registration($request['username'], $request['password']);
-	case "login":
-	    return login($request['username'],$request['password']); 
+	    case "login":
+	        return login($request['username'],$request['password']); 
+        case "createPost": // will generate new post entry for user and populate post collection
+            return createPost($request['username'],$request['media'], $request['content'], $request['postedAt']);
+        case "addFavoriteTrack": // will search track library and populate selected track to user_library
+            return;
+        case "addFavoriteArtist": // will search artist library and populate selected artist to user_library
+            return;
+        case "addFavoriteAlbum": // will search album library and populate selected album to user_library
+            return;
+        case "getFeed":
+            return;
     }
     return array("returnCode" => '0', "message" => "Server received request and processed");
 }
