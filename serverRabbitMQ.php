@@ -134,7 +134,7 @@ function createPost($session_key, $content, $postedAt) {
 // user profile curation with albums, artists, tracks
 
 // passing $session_key to access user object
-function addFavoriteTrack($session_key, $title, $artist){
+function addFavoriteTrack($session_key, $title, $artist) {
     global $database;
 
     $userCollection = $database->reg_users;
@@ -174,12 +174,12 @@ function addFavoriteTrack($session_key, $title, $artist){
         ]
     );
 
-    print_r(array('returnCode' => '0', 'message' => 'The track was favorited.'));
+    print_r(array('returnCode' => '0', 'message' => "$title by $artist was successfully added to favorites."));
 
-    return array("returnCode" => '0', "message" => 'The track was favorited.');
+    return array("returnCode" => '0', 'message' => "$title by $artist was successfully added to favorites.");
 }
 
-function addFavoriteArtist($username){
+function addFavoriteArtist($session_key, $artist) {
     global $database;
 
     $userCollection = $database->reg_users;
@@ -187,16 +187,30 @@ function addFavoriteArtist($username){
     // access stored session key
     // find corresponding User object in reg_users database w/ that session key
     // access that User object and store its username
+
     $query = array('keySession' => $session_key);
+    print_r(array('query' => $query)); // stack tracing for NULL error
+
 	$user = $userCollection->findOne($query);
+    print_r(array('user' => $user)); // stack tracing for NULL error
+
+    // stack tracing for NULL error
+    if(!$user) {
+        print_r(array('message' => "session_key cannot be traced back to user"));
+    } else {
+        print_r(array('message' => "user's session key authenticated"));
+    }
 
     $username = $user['username'];
+    print_r(array('username' => $username)); // stack tracing for NULL error
+
 
     // mongoDB ref for appending array elements: https://www.mongodb.com/docs/manual/reference/operator/update/push/
-        $userCollection->updateOne(
+
+    $userCollection->updateOne(
         ["username" => $username],
         [ 
-            $push => [
+            '$push' => [
                     "library.favoriteArtists" => [
                                                     "artist" => $artist
                                                 ]
@@ -204,12 +218,12 @@ function addFavoriteArtist($username){
         ]
     );
 
-    print_r(array('returnCode' => '0', 'message' => 'The artist was favorited.'));
+    print_r(array('returnCode' => '0', 'message' => "$artist was successfully added to favorites."));
 
-    return array("returnCode" => '0', "message" => 'The artist was favorited.');
+    return array("returnCode" => '0', 'message' => "$artist was successfully added to favorites.");
 }
 
-function addFavoriteAlbum($username){
+function addFavoriteAlbum($session_key, $album, $artist) {
     global $database;
 
     $userCollection = $database->reg_users;
@@ -217,27 +231,41 @@ function addFavoriteAlbum($username){
     // access stored session key
     // find corresponding User object in reg_users database w/ that session key
     // access that User object and store its username
+
     $query = array('keySession' => $session_key);
+    print_r(array('query' => $query)); // stack tracing for NULL error
+
 	$user = $userCollection->findOne($query);
+    print_r(array('user' => $user)); // stack tracing for NULL error
+
+    // stack tracing for NULL error
+    if(!$user) {
+        print_r(array('message' => "session_key cannot be traced back to user"));
+    } else {
+        print_r(array('message' => "user's session key authenticated"));
+    }
 
     $username = $user['username'];
+    print_r(array('username' => $username)); // stack tracing for NULL error
+
 
     // mongoDB ref for appending array elements: https://www.mongodb.com/docs/manual/reference/operator/update/push/
-        $userCollection->updateOne(
+
+    $userCollection->updateOne(
         ["username" => $username],
         [ 
-            $push => [
+            '$push' => [
                     "library.favoriteAlbums" => [
                                                     "album" => $album,
-                                                    "artist" => $artist,
-                                                    "year" => $year
+                                                    "artist" => $artist
                                                 ]
                     ]   
         ]
     );
-    print_r(array('returnCode' => '0', 'message' => 'The album was favorited.'));
 
-    return array("returnCode" => '0', "message" => 'The album was favorited.');
+    print_r(array('returnCode' => '0', 'message' => "$album was successfully added to favorites."));
+
+    return array("returnCode" => '0', 'message' => "$album was successfully added to favorites.");
 }
 
 // feedCollection for viewing posts of friends
@@ -269,13 +297,13 @@ function requestProcessor($request) {
             return addFavoriteTrack($request['session_key'],$request['title'], $request['artist']);
 
         case "addFavoriteArtist": // will search artist library and populate selected artist to user_library
-            return addFavoriteArtist($request['username'],$request['artist']);
+            return addFavoriteArtist($request['$session_key'],$request['artist']);
 
         case "addFavoriteAlbum": // will search album library and populate selected album to user_library
-            return addFavoriteAlbum($request['username'],$request['album'], $request['artist'], $request['year']);
+            return addFavoriteAlbum($request['session_key'],$request['album'], $request['artist']);
 
         case "getFeed":
-            return getFeed($request['username'],$request['media'], $request['content'], $request['postedAt']);
+            return getFeed($request['session_key'],$request['media'], $request['content'], $request['postedAt']);
     }
     return array("returnCode" => '0', "message" => "Server received request and processed");
 }

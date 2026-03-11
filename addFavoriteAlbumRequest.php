@@ -9,16 +9,15 @@ require_once('rabbitMQLib.inc');
 		exit();
 	}
 
-$username = $_POST['username'];
+// $username = $_POST['username'];
 
 $client = new rabbitMQClient("testRabbitMQ.ini", "testServer");
 
-$addFavoriteTrackRequest = [
-	'type' => 'addFavoriteTrack',
+$addFavoriteAlbumRequest = [
+	'type' => 'addFavoriteAlbum',
 	'username' => $_POST['username'],
 	'album' => $_POST['album'],
 	'artist' => $_POST['artist'],
-	'year' => $_POST['year'],
 ];
 
 $serverResponse = $client->send_request($addFavoriteAlbumRequest);
