@@ -133,8 +133,8 @@ function createPost($session_key, $content, $postedAt) {
 
 // user profile curation with albums, artists, tracks
 
-
-function addFavoriteTrack($username){
+// passing $session_key to access user object
+function addFavoriteTrack($session_key, $title, $artist){
     global $database;
 
     $userCollection = $database->reg_users;
@@ -142,17 +142,30 @@ function addFavoriteTrack($username){
     // access stored session key
     // find corresponding User object in reg_users database w/ that session key
     // access that User object and store its username
+
     $query = array('keySession' => $session_key);
+    print_r(array('query' => $query)); // stack tracing for NULL error
+
 	$user = $userCollection->findOne($query);
+    print_r(array('user' => $user)); // stack tracing for NULL error
+
+    // stack tracing for NULL error
+    if(!$user) {
+        print_r(array('message' => "session_key cannot be traced back to user"));
+    } else {
+        print_r(array('message' => "user's session key authenticated"));
+    }
 
     $username = $user['username'];
+    print_r(array('username' => $username)); // stack tracing for NULL error
+
 
     // mongoDB ref for appending array elements: https://www.mongodb.com/docs/manual/reference/operator/update/push/
 
     $userCollection->updateOne(
         ["username" => $username],
         [ 
-            $push => [
+            '$push' => [
                     "library.favoriteTracks" => [
                                                     "title" => $title,
                                                     "artist" => $artist
@@ -249,8 +262,11 @@ function requestProcessor($request) {
         case "createPost": // will generate new post entry for user and populate post collection
             return createPost($request['username'],$request['media'], $request['content'], $request['postedAt']);
 
-        case "addFavoriteTrack": // will search track library and populate selected track to user_library
-            return addFavoriteTrack($request['username'],$request['title'], $request['artist']);
+        // will search track library and populate selected track to user_library
+        // FIXED: null username field updated $request[username] to session_key 
+
+        case "addFavoriteTrack": 
+            return addFavoriteTrack($request['session_key'],$request['title'], $request['artist']);
 
         case "addFavoriteArtist": // will search artist library and populate selected artist to user_library
             return addFavoriteArtist($request['username'],$request['artist']);

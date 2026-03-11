@@ -13,16 +13,15 @@ $username = $_POST['username'];
 
 $client = new rabbitMQClient("testRabbitMQ.ini", "testServer");
 
-//this will show up on the queue
-$createPost = array(
-    'type' => 'createPost',
-    'username' => $userInput,
-    'media' => $media,
-    'content' => $content,
-    'postedAt' => time()
-);
+$addFavoriteTrackRequest = [
+	'type' => 'addFavoriteTrack',
+	'username' => $_POST['username'],
+	'album' => $_POST['album'],
+	'artist' => $_POST['artist'],
+	'year' => $_POST['year'],
+];
 
-$serverResponse = $client->send_request($createPost);
+$serverResponse = $client->send_request($addFavoriteAlbumRequest);
 
 //this is to see if it works
 echo "<pre>";

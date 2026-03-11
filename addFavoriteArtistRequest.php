@@ -9,20 +9,17 @@ require_once('rabbitMQLib.inc');
 		exit();
 	}
 
+$username = $_POST['username'];
+
 $client = new rabbitMQClient("testRabbitMQ.ini", "testServer");
 
-// access stored session key
-// find corresponding User object in reg_users database w/ that session key
-// access that User object and store its username
-
-$addFavoriteTrackRequest = [
+$addFavoriteArtistRequest = [
 	'type' => 'addFavoriteTrack',
-	'session_key' => $_COOKIE['SessionKey'], // FIXED: null username field issue
-	'title' => $_POST['title'],
+	'username' => $_POST['username'],
 	'artist' => $_POST['artist']
 ];
 
-$serverResponse = $client->send_request($addFavoriteTrackRequest);
+$serverResponse = $client->send_request($addFavoriteArtistRequest);
 
 //this is to see if it works
 echo "<pre>";
