@@ -78,4 +78,41 @@ function userSearch($userInput) {
     return json_decode($response, true);
 }
 
+// im using this ref to improve my code and understand better the comparision operators: 
+// https://www.php.net/manual/en/language.operators.comparison.php 
+function filterArtists($data){
+
+    $artists = [];
+
+    if(isset($data['included']) && is_array($data['included'])){
+
+        foreach($data['included'] as $item){
+
+            // making sure the item is an array and type is just artists
+            // ref i used: https://www.php.net/manual/en/function.is-array.php
+            if(is_array($item) && isset($item['type']) && $item['type'] == 'artists'){
+
+                $artists[] = [
+                    "id"=>$item['id'] ?? '',
+                    "name"=>$item['attributes']['name'] ?? '',
+                    "popularity"=>$item['attributes']['popularity'] ?? 0
+                ];
+
+            }
+
+        }
+
+    }
+
+    return $artists;
+}
+
+$server = new rabbitMQServer("testRabbitMQ.ini","testDMZ");
+
+echo "RabbitMQ Server Started".PHP_EOL;
+
+$server->process_requests('requestProcessor');
+
+exit();
+
 ?>
