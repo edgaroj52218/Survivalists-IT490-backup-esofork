@@ -137,59 +137,94 @@ function createPost($session_key, $content, $postedAt) {
 function addFavoriteTrack($username){
     global $database;
 
-    $postCollection = $database->reg_users;
+    $userCollection = $database->reg_users;
 
-    $userCollection->updateOne(array(
-        "username" => $username,
-        "library" => [
-            [
-                "favoriteTracks" => [
-                    [
-                        "title" => $title, 
-                        "artist" => $artist
-                    ] // needs to actively populate array as more tracks are added to favorites
-                ],
-            ]
+    // access stored session key
+    // find corresponding User object in reg_users database w/ that session key
+    // access that User object and store its username
+    $query = array('keySession' => $session_key);
+	$user = $userCollection->findOne($query);
+
+    $username = $user['username'];
+
+    // mongoDB ref for appending array elements: https://www.mongodb.com/docs/manual/reference/operator/update/push/
+
+    $userCollection->updateOne(
+        ["username" => $username],
+        [ 
+            $push => [
+                    "library.favoriteTracks" => [
+                                                    "title" => $title,
+                                                    "artist" => $artist
+                                                ]
+                    ]   
         ]
-    ));
+    );
+
+    print_r(array('returnCode' => '0', 'message' => 'The track was favorited.'));
+
+    return array("returnCode" => '0', "message" => 'The track was favorited.');
 }
 
 function addFavoriteArtist($username){
     global $database;
 
-    $postCollection = $database->reg_users;
+    $userCollection = $database->reg_users;
 
-    $userCollection->updateOne(array(
-        "username" => $username,
-        "library" => [
-            [
-                "favoriteArtists" => [
-                    [
-                        "artist" => $artist
-                    ] // needs to actively populate array as more tracks are added to favorites
-                ],
-            ]
+    // access stored session key
+    // find corresponding User object in reg_users database w/ that session key
+    // access that User object and store its username
+    $query = array('keySession' => $session_key);
+	$user = $userCollection->findOne($query);
+
+    $username = $user['username'];
+
+    // mongoDB ref for appending array elements: https://www.mongodb.com/docs/manual/reference/operator/update/push/
+        $userCollection->updateOne(
+        ["username" => $username],
+        [ 
+            $push => [
+                    "library.favoriteArtists" => [
+                                                    "artist" => $artist
+                                                ]
+                    ]   
         ]
-    ));
+    );
+
+    print_r(array('returnCode' => '0', 'message' => 'The artist was favorited.'));
+
+    return array("returnCode" => '0', "message" => 'The artist was favorited.');
 }
 
 function addFavoriteAlbum($username){
-global $database;
+    global $database;
 
-    $postCollection = $database->reg_users;
+    $userCollection = $database->reg_users;
 
-    $userCollection->updateOne(array(
-        "username" => $username,
-        "library" => [
-            [
-                "favoriteAlbums" => [
-                    [
-                        "album" => $artist, "year" => $year
-                    ],     // needs to actively populate array as more tracks are added to favorites
-                ]
-            ]
+    // access stored session key
+    // find corresponding User object in reg_users database w/ that session key
+    // access that User object and store its username
+    $query = array('keySession' => $session_key);
+	$user = $userCollection->findOne($query);
+
+    $username = $user['username'];
+
+    // mongoDB ref for appending array elements: https://www.mongodb.com/docs/manual/reference/operator/update/push/
+        $userCollection->updateOne(
+        ["username" => $username],
+        [ 
+            $push => [
+                    "library.favoriteAlbums" => [
+                                                    "album" => $album,
+                                                    "artist" => $artist,
+                                                    "year" => $year
+                                                ]
+                    ]   
         ]
-    ));
+    );
+    print_r(array('returnCode' => '0', 'message' => 'The album was favorited.'));
+
+    return array("returnCode" => '0', "message" => 'The album was favorited.');
 }
 
 // feedCollection for viewing posts of friends
@@ -207,18 +242,24 @@ function requestProcessor($request) {
     switch ($request['type']) {
         case "registration":
             return registration($request['username'], $request['password']);
+
 	    case "login":
 	        return login($request['username'],$request['password']); 
+
         case "createPost": // will generate new post entry for user and populate post collection
             return createPost($request['username'],$request['media'], $request['content'], $request['postedAt']);
+
         case "addFavoriteTrack": // will search track library and populate selected track to user_library
-            return;
+            return addFavoriteTrack($request['username'],$request['title'], $request['artist']);
+
         case "addFavoriteArtist": // will search artist library and populate selected artist to user_library
-            return;
+            return addFavoriteArtist($request['username'],$request['artist']);
+
         case "addFavoriteAlbum": // will search album library and populate selected album to user_library
-            return;
+            return addFavoriteAlbum($request['username'],$request['album'], $request['artist'], $request['year']);
+
         case "getFeed":
-            return;
+            return getFeed($request['username'],$request['media'], $request['content'], $request['postedAt']);
     }
     return array("returnCode" => '0', "message" => "Server received request and processed");
 }
