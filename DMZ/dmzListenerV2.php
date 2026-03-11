@@ -197,16 +197,130 @@ function filterTracks($data){
 
     }
 
-    /return $tracks;
+    return $tracks;
 }
 
+function searchWithFilter($artist,$type){
+
+    global $tidalCollection;
+
+    $search = $tidalCollection->findOne(['userInput'=>$artist]);
+
+    //trying new logic because if we search the same artist again, its giving us an empty array()
+    $needApi = false;
+
+    if($search) {
+        $data = $search['results'];
+
+        // ref: https://www.youtube.com/watch?v=6FeWWQH0yfY
+        switch($type){
+            case 'artists':
+                if(empty(filterArtists($data))) $needApi = true;
+                break;
+            case 'albums':
+                if(empty(filterAlbums($data))) $needApi = true;
+                break;
+            case 'tracks':
+                if(empty(filterTracks($data))) $needApi = true;
+                break;
+
+             // if we dont know the type, we just call tidal
+             // ref: https://www.php.net/manual/en/functions.arguments.php 
+            default:
+                $needApi = true;
+        }
+    } else {
+        $needApi = true; // if nothing, we go to the api
+    }
+
+    if($needApi){
+        $data = userSearch($artist);
+
+        if($search){
+            $tidalCollection->updateOne(['userInput'=>$artist], ['$set'=>['results'=>$data,'time'=>time()]]);
+               echo "Updated the results to MongoDB".PHP_EOL;
+        } else {
+            $tidalCollection->insertOne(['userInput'=>$artist, 'results'=>$data, 'time'=>time()]);
+             echo "Added the new results to MongoDB".PHP_EOL;
+       }
+    } else {
+        echo "Using the cached data".PHP_EOL;
+     }
+
+    // trying to return only the data that matches what the user wants..
+    switch($type){
+        case 'artists': return filterArtists($data);
+        case 'albums': return filterAlbums($data);
+        case 'tracks': return filterTracks($data);
+        default: return [];
+    }
+}
+
+/*
+    // print_r($search);
+
+    // checking if there is something and if it has data or no 
+    if($search && (!empty($search['results']['data']) || !empty($search['results']['included']))){
+
+        $data = $search['results'];
+      // print_r($search['results']['data']);
+echo "Search Found".PHP_EOL;
+    } else {
+        // if empty or invalid i need to call the API
+        $data = userSearch($artist);
+
+        if (!$search) {
+          $tidalCollection->insertOne(
+            ['userInput' => $artist, 'results' => $data, 'time' =>  time()]);
+
+        } else {
+
+        $tidalCollection->updateOne(
+            ['userInput'=>$artist], ['$set'=>['results'=>$data,'time'=>time()]], ['upsert'=>true]);
+        }
+    }
+     // trying to filter based on the req
+    if($type == "artists"){
+        return filterArtists($data);
+    }
+
+    if($type == "albums"){
+        return filterAlbums($data);
+    }
+
+    if($type == "tracks"){
+        return filterTracks($data);
+    }
+
+    return [];
+}
+
+*/
+function requestProcessor($request)
+{
+    global $tidalCollection;
+
+    if(!isset($request['type']))
+    {
+        return array("returnCode" => '1', "message" => "This is an invalid request type");
+    }
+
+    if($request['type'] == "search")
+    {
+        $artist = $request['artist'];
+         $filter = $request['filter']; 
+
+        $results = searchWithFilter($artist,$filter);
+
+        return $results;
+    }
+
+    return "Unknown request";
+}
 
 $server = new rabbitMQServer("testRabbitMQ.ini","testDMZ");
-
 echo "RabbitMQ Server Started".PHP_EOL;
-
 $server->process_requests('requestProcessor');
-
 exit();
 
 ?>
