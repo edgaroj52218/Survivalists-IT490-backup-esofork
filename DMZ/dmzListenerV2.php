@@ -256,46 +256,6 @@ function searchWithFilter($artist,$type){
     }
 }
 
-/*
-    // print_r($search);
-
-    // checking if there is something and if it has data or no 
-    if($search && (!empty($search['results']['data']) || !empty($search['results']['included']))){
-
-        $data = $search['results'];
-      // print_r($search['results']['data']);
-echo "Search Found".PHP_EOL;
-    } else {
-        // if empty or invalid i need to call the API
-        $data = userSearch($artist);
-
-        if (!$search) {
-          $tidalCollection->insertOne(
-            ['userInput' => $artist, 'results' => $data, 'time' =>  time()]);
-
-        } else {
-
-        $tidalCollection->updateOne(
-            ['userInput'=>$artist], ['$set'=>['results'=>$data,'time'=>time()]], ['upsert'=>true]);
-        }
-    }
-     // trying to filter based on the req
-    if($type == "artists"){
-        return filterArtists($data);
-    }
-
-    if($type == "albums"){
-        return filterAlbums($data);
-    }
-
-    if($type == "tracks"){
-        return filterTracks($data);
-    }
-
-    return [];
-}
-
-*/
 function requestProcessor($request)
 {
     global $tidalCollection;
