@@ -13,6 +13,7 @@ $mongoClient = new MongoDB\Client($uri);
 $database = $mongoClient->survivalists_db;
 $tidalDatabase = $database->tidal_db;
 
+
 function searchRequest($userInput, $userFilters = null) {
 
     global $tidalDatabase;
@@ -38,25 +39,8 @@ function searchRequest($userInput, $userFilters = null) {
 	$result = $apiResult;
     }
 
-    // i referenced the following link to understand isset with array elements: https://www.php.net/manual/en/function.isset.php
-    // i need to fix this since is giving me successful artists, but i dont get albums or tracks.
-    if ($userFilters && isset($result['data']['relationships'][$userFilters]['data'])) {
-	$dataFiltered = $result['data']['relationships'][$userFilters]['data'];
-	$finalResults = [];
-
-	foreach ($dataFiltered as $data) {
-	    foreach ($result['included'] as $includedData) {
-		if ($includedData['id'] == $data['id']) {
-		    $finalResults[] = $includedData;
-	 	}
-	    }
-   	}
-
-	$result = $finalResults;
-    }
-
-	print_r(array("returnCode" => '0', "userInput" => $userInput, "results" => $result));
-	return(array("returnCode" => '0', "userInput" => $userInput, "results" => $result)); 
+    print_r(array("returnCode" => '0', "userInput" => $userInput, "results" => $result));
+    return(array("returnCode" => '0', "userInput" => $userInput, "results" => $result)); 
 }
 
 function requestProcessor($request) {

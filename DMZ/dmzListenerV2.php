@@ -1,5 +1,16 @@
 <?php 
 
+require_once('../path.inc');
+require_once('../get_host_info.inc');
+require_once('../rabbitMQLib.inc');
+require '../../vendor/autoload.php';
+
+
+$uri = 'mongodb://100.105.160.23:27017/';
+$mongoClient = new MongoDB\Client($uri);
+$database = $mongoClient->survivalists_db;
+$tidalCollection = $database->tidal_db;
+
 function userToken() {
 
 $clientID = "TNi2hY6txPCXnDAA"; // need to add to env eventually for security
@@ -41,45 +52,30 @@ return $decodedResponse['access_token'];
 
 } 
 
-// general search 
 function userSearch($userInput) {
 
     $tidalToken = userToken();
-
     $query = urlencode($userInput);
 
-    // url template example: https://openapi.tidal.com/v2/searchResults/abba?explicitFilter=INCLUDE&countryCode=US&include=artists&include=albums&include=tracks
-   // $url = "https://openapi.tidal.com/v2/searchResults/$query?explicitFilter=INCLUDE&countryCode=US&include=artists&include=albums&include=tracks";
     $url = "https://openapi.tidal.com/v2/searchResults/$query?explicitFilter=INCLUDE&countryCode=US&include=artists,albums,tracks";
-
+    // $url = "https://openapi.tidal.com/v2/searchResults/$query?explicitFilter=INCLUDE&countryCode=US&include=artists&include=albums&include=tracks";
 
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_URL, $url);
+
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $headers = [
-                "accept: application/vnd.api+json", 
-                "Authorization: Bearer $tidalToken",
-                // "Content-Type: application/vnd.tidal.v1+json"
-            ];
+        "accept: application/vnd.api+json",
+        "Authorization: Bearer $tidalToken"
+    ];
 
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
     $response = curl_exec($ch);
 
-    // ref: ZEND - error checking
-    if($response === false) {
-        error_log("cURL error: " . curl_error($ch));
-        exit("Sorry! An error occurred.");
-    }
-
     curl_close($ch);
 
-    $decodedResponse = json_decode($response, true);
-    //print_r($decodedResponse);
-
-    return $decodedResponse;
+    return json_decode($response, true);
 }
 
 ?>
-
