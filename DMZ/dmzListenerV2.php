@@ -208,26 +208,33 @@ function searchWithFilter($artist,$type){
 
     //trying new logic because if we search the same artist again, its giving us an empty array()
     $needApi = false;
+    $cacheDuration = 604800; //holding data for 7 days
 
     if($search) {
         $data = $search['results'];
 
+        if ((time() - $search['time']) > $cacheDuration) {
+            $needApi = true;
+             echo "the cache is old, we're gonna fetch new data..." . PHP_EOL;
+      
         // ref: https://www.youtube.com/watch?v=6FeWWQH0yfY
-        switch($type){
-            case 'artists':
-                if(empty(filterArtists($data))) $needApi = true;
-                break;
-            case 'albums':
-                if(empty(filterAlbums($data))) $needApi = true;
-                break;
-            case 'tracks':
-                if(empty(filterTracks($data))) $needApi = true;
-                break;
+        }else {
+            switch($type){
+                case 'artists':
+                    if(empty(filterArtists($data))) $needApi = true;
+                    break;
+                case 'albums':
+                    if(empty(filterAlbums($data))) $needApi = true;
+                    break;
+                case 'tracks':
+                    if(empty(filterTracks($data))) $needApi = true;
+                    break;
 
              // if we dont know the type, we just call tidal
              // ref: https://www.php.net/manual/en/functions.arguments.php 
-            default:
+                default:
                 $needApi = true;
+             }
         }
     } else {
         $needApi = true; // if nothing, we go to the api
