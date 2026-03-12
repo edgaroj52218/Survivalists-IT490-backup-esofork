@@ -3,6 +3,8 @@
 		header('Location: login.html');
 		exit();
 	}
+
+    
 ?>
 
 <!-- video ref used for basic page template: https://www.youtube.com/watch?v=NljIHlZRTTE (PT 1) -->
@@ -69,7 +71,7 @@
             <div class="important-links">
                 <a href="#"><img src="../images/news.png" alt="shortcut"> Profile </a>
                 <a href="#"><img src="../images/friends.png" alt="shortcut"> Latest Tunes </a>
-                <a href="#"><img src="../images/group.png" alt="shortcut"> Friends </a>
+                <a href="#"><img src="../images/friends.png" alt="shortcut"> Friends </a>
             </div>
         </div>
 
@@ -77,6 +79,8 @@
 
         <div class="main-content">
 
+        <!-- for every element in the post collection, create them a post container -->
+        <!--parsing values of each post to populate the post container's placeholder text -->
             <div class="write-post-container">
                 <div class="user-profile">
                     <img src="../images/profile-pic.png" alt="profile pic">

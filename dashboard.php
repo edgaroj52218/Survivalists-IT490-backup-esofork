@@ -9,7 +9,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Survivalists - Dashboard</title>
+    <title>Survivalists | Dashboard</title>
     <style>
         /* I picked this font but we can change it later on. Link that i accessed:
         https://fonts.google.com/specimen/Playfair+Display
@@ -96,7 +96,7 @@
             <div class="profileUser">
                 <!-- i got the image from here: https://unsplash.com/photos/collection-of-various-music-album-covers-998pvuxqK6Y -->
                 <img src="images/dashboardImage.jpg" alt="User">
-                <h1>Welcome back, Survivalist!</h1>
+                <h1><?php echo 'Hello ' . htmlspecialchars($_COOKIE['username']).'!'; ?></h1>
             </div>
             <span class="status">SESSION ACTIVE</span>
         </div>
@@ -108,6 +108,10 @@
                 <a href="addFavoriteArtist.php" class="href">Add a favorite artist</a>
                 <br>
                 <a href="addFavoriteAlbum.php" class="href">Add a favorite album</a>
+                <br>
+                <a href="user-profile.php" class="href">Profile</a>
+                <br>
+                <a href="createPost.php" class="href">Create post</a>
 
         </div>
         <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:

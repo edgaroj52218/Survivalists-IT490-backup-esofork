@@ -1,7 +1,13 @@
+<?php
+	if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
+		header('Location: login.html');
+		exit();
+	}
+?>
+
 <!-- video ref used for basic page template: https://www.youtube.com/watch?v=NljIHlZRTTE (PT 1) -->
 
 <!-- video ref used for basic page template: https://www.youtube.com/watch?v=RrWUAmh93r4 (PT 2) -->
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +15,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Profile | SocialTune</title>
+    <title>View Friend Profile | SocialTune</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://kit.fontawesome.com/95d0fccd5e.js" crossorigin="anonymous"></script>
 </head>
@@ -89,14 +95,14 @@
 
     <!-- profile page -->
     <div class="profile-container">
-        <img src="../images/cover.png" alt="cover photo" class="cover-img">
+        <!-- <img src="../images/cover.png" alt="cover photo" class="cover-img"> -->
         <div class="profile-details">
             <div class="pd-left">
                 <div class="pd-row">
                     <img src="../images/profile.png" alt="profile-pic" class="pd-image">
                     <div>
-                        <h3>Bruce Wayne</h3>
-                        <p>120 Friends - 20 Mutual</p>
+                        <h3>RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY</h3>
+                        <p>RETRIEVE FRIENDS COUNTER FROM DATABASE</p>
                         <img src="../images/member-1.png" alt="member img">
                         <img src="../images/member-2.png" alt="member img">
                         <img src="../images/member-3.png" alt="member img">
@@ -104,58 +110,49 @@
                     </div>
                 </div>
             </div>
-            <div class="pd-right">
-
-                <button type="button"><img src="../images/add-friends.png" alt="add friends">Friend</button>
-                <button type="button"><img src="../images/message.png" alt="message">Message</button>
-                <br>
-                <a href=""><img src="../images/more.png" alt="more-btn"></a>
-
-            </div>
         </div>
 
         <div class="profile-info">
 
             <div class="info-col">
-
-                <div class="profile-intro">
-                    <h3>Intro</h3>
-                    <p class="intro-text">Believe in yourself and you can do unbelievable things. <img src="" alt="">
-                    </p>
-                    <hr>
-                    <ul>
-                        <li><img src="../images/profile-job.png" alt="job icon profile">Only-child and heir</li>
-                        <li><img src="../images/profile-study.png" alt="job icon profile">Entrepreneur</li>
-                        <li><img src="../images/profile-home.png" alt="job icon profile">Lives in Gotham City</li>
-                    </ul>
-                </div>
-                <div class="profile-intro">
-                    <div class="title-box">
-                        <h3>Photos</h3>
-                        <a href="#">All Photos</a>
-                    </div>
-                    <div class="photo-box">
-                        <div><img src="../images/photo1.png" alt="photo1"></div>
-                        <div><img src="../images/photo2.png" alt="photo2"></div>
-                        <div><img src="../images/photo3.png" alt="photo3"></div>
-                        <div><img src="../images/photo4.png" alt="photo4"></div>
-                        <div><img src="../images/photo5.png" alt="photo5"></div>
-                    </div>
-                </div>
                 <div class="profile-intro">
                     <div class="title-box">
                         <h3>Friends</h3>
                         <a href="#">View Friends</a>
                     </div>
-                    <p>120 (10 Mutual)</p>
+                    <p>RETRIEVE COUNTER OF FRIENDS FROM DATABASE</p>
                     <div class="friends-box">
-                        <div><img src="../images/member-1.png" alt="member1"><p>Peter Parker</p></div>
-                        <div><img src="../images/member-2.png" alt="member2"><p>Peter Parker</p></div>
-                        <div><img src="../images/member-3.png" alt="member3"><p>Peter Parker</p></div>
-                        <div><img src="../images/member-4.png" alt="member4"><p>Peter Parker</p></div>
-                        <div><img src="../images/member-5.png" alt="member5"><p>Peter Parker</p></div>
-                        <div><img src="../images/member-5.png" alt="member5"><p>Peter Parker</p></div>
+                        <!-- if statement that adds users to box when user has followers/friends -->
+                        <i class="fa-solid fa-user"><span>RETRIEVE FOLLOWER NAME</span></i>
 
+
+                    </div>
+                </div>
+                <div class="profile-intro">
+                    <div class="title-box">
+                        <h3>Favorite Tracks</h3>
+                    </div>
+                    <p>RETRIEVE TRACKS FROM USER_LIBRARY DATABASE</p>
+                    <div class="friends-box">
+                        <!-- if statement that adds users to box when user has followers/friends -->
+                    </div>
+                </div>
+                <div class="profile-intro">
+                    <div class="title-box">
+                        <h3>Favorite Artists</h3>
+                    </div>
+                    <p>RETRIEVE ARTISTS FROM USER_LIBRARY DATABASE</p>
+                    <div class="friends-box">
+                        <!-- if statement that adds users to box when user has followers/friends -->
+                    </div>
+                </div>
+                <div class="profile-intro">
+                    <div class="title-box">
+                        <h3>Favorite Albums</h3>
+                    </div>
+                    <p>RETRIEVE ALBUMS FROM USER_LIBRARY DATABASE</p>
+                    <div class="friends-box">
+                        <!-- if statement that adds users to box when user has followers/friends -->
                     </div>
                 </div>
             </div>
@@ -163,77 +160,50 @@
                 <div class="write-post-container">
                     <div class="user-profile">
                         <img src="../images/profile-pic.png" alt="profile pic">
-                        <div>
-                            <p>Bruce Wayne</p>
-                            <small>Public <i class="fa-solid fa-caret-down"></i></small>
-                        </div>
                     </div>
 
                     <div class="post-input-container">
-                        <textarea rows="3" placeholder="What are you listening to, Bruce?"></textarea>
-                        <div class="add-post-links">
+                        <!-- should be some sort of search text box that drops down and populates with related seach results -->
+                        <div class="post-search-box">
+                            <img src="../images/search.png" alt="search icon">
+                            <input type="text" placeholder="What are you listening to, $USERNAME?">
+                        </div>
+                        <textarea rows="3" placeholder="Say something..."></textarea>
+                <button type="button" id="submit-btn">Submit</button>
+
+
+                        <div class="add-post-links"> <!-- figure out the embed logic for playback -->
                             <a href="#"><img src="../images/video.png" alt="video">Live Video</a>
-                            <a href="#"><img src="../images/photo.png" alt="video">Photo/Video</a>
-                            <a href="#"><img src="../images/feeling.png" alt="video">Feeling/Activity</a>
                         </div>
                     </div>
                 </div>
+
                 <div class="post-container">
                     <div class="post-row">
                         <div class="user-profile">
                             <img src="../images/profile-pic.png" alt="profile pic">
+                            <!-- will modify to user icons instead of images -->
                             <div>
-                                <p>Bruce Wayne</p>
-                                <span>March 8, 2026 8:55PM</span>
+                                <p>RETRIEVE USERNAME FROM POST DATABASE</p>
+                                <span>RETRIEVE DATE OBJECT FROM POST DATABASE</span>
                             </div>
                         </div>
                         <a href="#"><i class="fas fa-ellipsis-v"></i></a>
                     </div>
-                    <p class="post-text">Sigh. <span>@CommissionerGordon</span> <a href="#">#Life</a>&nbsp<a
-                            href="#">#AnotherDay</a></p>
-                    <img src="../images/feed-image-1.png" alt="feed image 1" class="post-img">
-
+                    <p class="post-text">RETRIEVE USERNAME FROM POST DATABASE</p>
                     <div class="post-row">
                         <div class="activity-icons">
-                            <div><img src="../images/like.png" alt="like"> 120</div>
-                            <div><img src="../images/comments.png" alt="comments"> 45</div>
-                            <div><img src="../images/share.png" alt="shares"> 20</div>
-
-                        </div>
-                        <div class="post-profile-icon">
-                            <img src="../images/profile-pic.png" alt="profile pic"><i
-                                class="fa-solid fa-caret-down"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="post-container">
-                    <div class="post-row">
-                        <div class="user-profile">
-                            <img src="../images/profile-pic.png" alt="profile pic">
-                            <div>
-                                <p>Bruce Wayne</p>
-                                <span>March 8, 2026 8:55PM</span>
+                            <div><img src="../images/like.png" alt="like"> RETRIEVE COUNTER OBJECT FROM POST DATABASE
                             </div>
-                        </div>
-                        <a href="#"><i class="fas fa-ellipsis-v"></i></a>
-                    </div>
-                    <p class="post-text">Sigh. <span>@CommissionerGordon</span> <a href="#">#Life</a>&nbsp<a
-                            href="#">#AnotherDay</a></p>
-                    <img src="../images/feed-image-1.png" alt="feed image 1" class="post-img">
+                            <div><img src="../images/comments.png" alt="comments"> RETRIEVE COUNTER OBJECT FROM POST
+                                DATABASE</div>
+                            <div><img src="../images/share.png" alt="shares"> RETRIEVE COUNTER OBJECT FROM POST DATABASE
+                            </div>
 
-                    <div class="post-row">
-                        <div class="activity-icons">
-                            <div><img src="../images/like.png" alt="like"> 120</div>
-                            <div><img src="../images/comments.png" alt="comments"> 45</div>
-                            <div><img src="../images/share.png" alt="shares"> 20</div>
-
-                        </div>
-                        <div class="post-profile-icon">
-                            <img src="../images/profile-pic.png" alt="profile pic"><i
-                                class="fa-solid fa-caret-down"></i>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

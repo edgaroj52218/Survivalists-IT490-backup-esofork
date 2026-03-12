@@ -55,7 +55,9 @@ function registration($username, $password) {
                     // ]
                 ]
         ],
-        "posts" => []
+        "posts" => [], 
+        "following" => [],
+        "followers" => []
     ));
 
 	print_r(array('returnCode' => '0', 'message' => 'The user was registered.', 'username' => $username, 'password' => $password));
@@ -108,23 +110,35 @@ function createPost($session_key, $content, $postedAt) {
 
     $postCollection = $database->posts_db;
 
-    // use session key to identify uniquely logged in user
-    // will search database by session_key and retrieve attached user's username/id
 
 	// logic from login method: $query = array('username' => $username); // 'password' => $password);
 	                         // $user = $userCollection->findOne($query);
 
+    $userCollection = $database->reg_users; // need to update the posts array in the user object
+
+    
+    // use session key to identify uniquely logged in user
+    // will search database by session_key and retrieve attached user's username/id
     $query = array('keySession' => $session_key);
 	$user = $userCollection->findOne($query);
 
     $username = $user['username'];
 
-    $postCollection->insertOne(array(
+    // populated post into compiled post collection (will use for feed)
+    $post = $postCollection->insertOne(array(
         "username" => $username,
         "media" => $media,
         "content" => $content,
-        "postedAt" => $postedAt,
+        "postedAt" => $postedAt
     ));
+
+    // adds created post into the unique poster's post array
+    $userCollection->updateOne(
+			["username" => $username],
+        		['$push' => [
+				"posts" => $post->getInsertedId() // NOTE: keySession is database's session key variable,  session_key is server's variable
+			]]
+		);
 
     print_r(array('returnCode' => '0', 'message' => 'The post was created.'));
 
@@ -269,10 +283,75 @@ function addFavoriteAlbum($session_key, $album, $artist) {
 }
 
 // feedCollection for viewing posts of friends
+// REF: https://stackoverflow.com/questions/8163850/how-to-create-a-feed-of-files-from-people-that-a-user-is-following
+
+// {
+//     "_id": (some id)
+//     "UserId": (id of the user who 'owns', i.e. reads this feed)
+//     "FriendId": (if of the friend who posted the file)
+//     "FriendName": "John Doe" (name of the fried, denormalized)
+//     "Timestamp": ...
+// }
+
+// iterate through the signed in user's following array
+// retrieve and add all of those posts to a temporary array 
 function getFeed() {
+    global $database;
+
+    $userCollection = $database->reg_users;
+
+    // access stored session key
+    // find corresponding User object in reg_users database w/ that session key
+    // access that User object and store its username
+
+    $query = array('keySession' => $session_key);
+    print_r(array('query' => $query)); // stack tracing for NULL error
+
+	$user = $userCollection->findOne($query);
+    print_r(array('user' => $user)); // stack tracing for NULL error
+
+    // stack tracing for NULL error
+    if(!$user) {
+        print_r(array('message' => "session_key cannot be traced back to user"));
+    } else {
+        print_r(array('message' => "user's session key authenticated"));
+    }
+
+    $username = $user['username'];
+    print_r(array('username' => $username)); // stack tracing for NULL error
+
 
 }
 
+// iterate through the posts array of the signed in user
+// retrieve and have a for loop that creates a post-container for each post element in array
+function getUserFeed() {
+    global $database;
+
+    $userCollection = $database->reg_users;
+
+    // access stored session key
+    // find corresponding User object in reg_users database w/ that session key
+    // access that User object and store its username
+
+    $query = array('keySession' => $session_key);
+    print_r(array('query' => $query)); // stack tracing for NULL error
+
+	$user = $userCollection->findOne($query);
+    print_r(array('user' => $user)); // stack tracing for NULL error
+
+    // stack tracing for NULL error
+    if(!$user) {
+        print_r(array('message' => "session_key cannot be traced back to user"));
+    } else {
+        print_r(array('message' => "user's session key authenticated"));
+    }
+
+    $username = $user['username'];
+    print_r(array('username' => $username)); // stack tracing for NULL error
+
+    
+}
 
 function requestProcessor($request) {
     if (!isset($request['type'])) {
@@ -288,7 +367,7 @@ function requestProcessor($request) {
 	        return login($request['username'],$request['password']); 
 
         case "createPost": // will generate new post entry for user and populate post collection
-            return createPost($request['username'],$request['media'], $request['content'], $request['postedAt']);
+            return createPost($request['session_key'],$request['media'], $request['content'], $request['postedAt']);
 
         // will search track library and populate selected track to user_library
         // FIXED: null username field updated $request[username] to session_key 
