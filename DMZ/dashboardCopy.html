@@ -25,7 +25,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            /*margin: 0;*/
+            overflow: hidden;
         }
         /* I made the dashboard box bigger (width) so we have space to add more stuff, but we can change this value later on */
         .dashboard {
@@ -37,6 +38,7 @@
             box-shadow: 5px 5px 10px #5EBEC4; /* this gives the shiny effect on the right side */
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         .header {
             display: flex;
@@ -89,7 +91,7 @@
             width: 700px;
             position: absolute;
             top: 145px;  
-            left: 100px;     
+            left: 50px;     
         }
 
         .searchInput {
@@ -114,13 +116,16 @@
         }
 
         .checkBoxes {
-            margin-top: 15px;
+            margin-top: -3px;
             width: 100%;
             font-size: 14px;
             display: block;;
         }
          
-
+        .checkBoxes label {
+            margin-right: 15px;
+            cursor: pointer;
+        }
         
         .logoutButton {
             align-self: flex-start;
