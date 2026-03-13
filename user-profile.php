@@ -1,17 +1,18 @@
 <?php
+    require 'vendor/autoload.php'; 
+
 	if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
 		header('Location: login.html');
 		exit();
-	}
-
-    // pull all User documents from the reg_user db
-    $uri = 'mongodb://100.105.160.23:27017/';
-    $mongoClient = new MongoDB\Client($uri);
-    $database = $mongoClient->survivalists_db;
-
-    $userCollection = $database->reg_users;
-    $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]); // find the User document with the stored cookie's matching session key
-
+	} else {
+        $uri = "mongodb://100.105.160.23:27017/";
+    
+        $client = new MongoDB\Client($uri);
+        $database = $client->survivalists_db;
+        $userCollection = $database->reg_users;
+        
+        $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
+    }
 ?>
 
 <!-- video ref used for basic page template: https://www.youtube.com/watch?v=NljIHlZRTTE (PT 1) -->
@@ -24,8 +25,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Profile | SocialTune</title>
-    <link rel="stylesheet" href="style.css">
+    <title>View Friend Profile | SocialTune</title>
+    <link rel="stylesheet" href="/user/style.css">
     <script src="https://kit.fontawesome.com/95d0fccd5e.js" crossorigin="anonymous"></script>
 </head>
 
@@ -110,28 +111,21 @@
                 <div class="pd-row">
                     <img src="../images/profile.png" alt="profile-pic" class="pd-image">
                     <div>
-
-                        <!-- REF: https://www.w3schools.com/php/php_echo_print.asp -->
-                        <!-- retrieve user object's username-->
-
-                        <?php 
-                            $username = $user['username']; 
-                            echo "<h3>$username</h3>";
+                        <?php
+                            echo "<h3>";
+                            
+                            // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
+                            $username = $user['username'];
+                            echo $username;
+                            echo "</h3>";
                         ?>
-
-                        <!-- count how many posts are in user's posts' collection -->
-
-                        <?php 
-                            $postCount = count($user['posts']); 
-                            echo "<p>$postCount</p>";
-                        ?>
-
+                        <p>RETRIEVE FRIENDS COUNTER FROM DATABASE</p>
+                        <img src="../images/member-1.png" alt="member img">
+                        <img src="../images/member-2.png" alt="member img">
+                        <img src="../images/member-3.png" alt="member img">
+                        <img src="../images/member-4.png" alt="member img">
                     </div>
                 </div>
-            </div>
-            <div class="pd-right">
-                <button type="button"><i class="fa-solid fa-pen-to-square"></i>Edit</button>
-                <br>
             </div>
         </div>
 
@@ -140,50 +134,29 @@
             <div class="info-col">
                 <div class="profile-intro">
                     <div class="title-box">
-                        <h3>Followers</h3>
-                        <a href="#">View</a>
+                        <h3>Friends</h3>
+                        <a href="#">View Friends</a>
                     </div>
-                    <!-- retrieve count of followers from user's followers array-->
-                        <?php 
-                            $followers = $user['followers'];
-                            $followerCount = count($followers); 
-                            echo "<p>$followerCount</p>";
-                        ?>
-                    
-                    <!-- iterate through first three elements of array using for-loop -->
-                    <!-- REF: https://www.php.net/manual/en/control-structures.for.php-->
-
-                    <!-- for ($i = 1; $i <= 10; $i++) {echo $i;} -->
-
+                    <p>RETRIEVE COUNTER OF FRIENDS FROM DATABASE</p>
                     <div class="friends-box">
-                        
-                    <!-- if statement that adds users to box when user has followers/friends -->
-                    <!-- "<i class="fa-solid fa-user"><span>$user['followers']</span></i>" -->
+                        <!-- if statement that adds users to box when user has followers/friends -->
+                        <i class="fa-solid fa-user"><span>RETRIEVE FOLLOWER NAME</span></i>
 
-                        <?php 
-                        // for every follower in follower array, populate their name in a span element
-                            for($counter = 0; $counter < $followerCount; $counter++) { 
-                                $followerUsername = $followers[$counter]; // at this number element in the user's followers array
-                                echo "<i class='fa-solid fa-user'><span>$followerUsername</span><br></i>";
-                            };
-                        ?>
 
                     </div>
                 </div>
                 <div class="profile-intro">
                     <div class="title-box">
-                        <h3>Favorite Tracks</h3> <!-- take the top three of library.favoriteTracks-->
-                        <a href="../addFavoriteTrack.php">Add</a>
+                        <h3>Favorite Tracks</h3>
                     </div>
-                    <p><?php count($user['posts'])?></p>
+                    <p>RETRIEVE TRACKS FROM USER_LIBRARY DATABASE</p>
                     <div class="friends-box">
                         <!-- if statement that adds users to box when user has followers/friends -->
                     </div>
                 </div>
                 <div class="profile-intro">
                     <div class="title-box">
-                        <h3>Favorite Artists</h3> <!-- take the top three of library.favoriteArtists-->
-                        <a href="../addFavoriteArtist.php">Add</a>
+                        <h3>Favorite Artists</h3>
                     </div>
                     <p>RETRIEVE ARTISTS FROM USER_LIBRARY DATABASE</p>
                     <div class="friends-box">
@@ -192,8 +165,7 @@
                 </div>
                 <div class="profile-intro">
                     <div class="title-box">
-                        <h3>Favorite Albums</h3><!-- take the top three of library.favoriteAlbums-->
-                        <a href="../addFavoriteAlbum.php">Add</a>
+                        <h3>Favorite Albums</h3>
                     </div>
                     <p>RETRIEVE ALBUMS FROM USER_LIBRARY DATABASE</p>
                     <div class="friends-box">
