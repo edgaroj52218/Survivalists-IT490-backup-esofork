@@ -127,10 +127,10 @@
                             // <p>RETRIEVE FOLLOWER COUNTER FROM DATABASE</p>
                             $followerCount = count($user['followers']);
                             
-                            if($followerCount == null) {
+                            if($followerCount == null || $followerCount == 0) {
                                 echo "No followers yet.";
                             } else {
-                                echo "Followed by $followingCount other(s)";
+                                echo "Followed by $followerCount other(s)";
                             }
 
                             echo "</p>";
@@ -170,12 +170,13 @@
                             $following = $user['following'];
 
                             foreach($following as $document) {
-                            // echo "<i class='fa-solid fa-user'>";
-                            // echo "</i>";
 
-                                echo "<span>";
-                                echo htmlspecialchars($document);
-                                echo "</span>";
+                                echo "<div class='user-curation'>";
+                                    echo "<i class='fa-solid fa-user'>";
+                                        echo "&nbsp";
+                                        echo htmlspecialchars($document);
+                                    echo "</i>";
+                                echo "</div>";
                             };
 
                         echo "</div>";
@@ -190,7 +191,7 @@
                     <?php
                         echo "<div class='friends-box'>";
 
-                        // will use foreach loop to retrieve each username of the items in the logged in User's follower array
+                        // will use foreach loop to retrieve each track of the items in the logged in User's favoriteTracks
                         $favoriteTracks = $user['library']['favoriteTracks'];
                         // $favTrackTitle = json_encode($favoriteTracks['title']);
                         // $favTrackArtist = json_encode($favoriteTracks['artist']);
@@ -215,9 +216,29 @@
                         <h3>Favorite Artists</h3>
                         <a href="addFavoriteArtist.php">Add an artist</a>
                     </div>
-                    <p>RETRIEVE ARTISTS FROM USER_LIBRARY DATABASE</p>
+                    <!-- <p>RETRIEVE ARTISTS FROM USER_LIBRARY DATABASE</p> -->
                     <div class="friends-box">
                         <!-- if statement that adds users to box when user has followers/friends -->
+                        <?php
+                        echo "<div class='friends-box'>";
+
+                        // will use foreach loop to retrieve each artist in the logged in User's favoriteArtist array
+                        $favoriteArtists = $user['library']['favoriteArtists'];
+                        // $favTrackArtist = json_encode($favoriteArtists['artist']);
+
+                            foreach($favoriteArtists as $document) {
+                            // echo "<i class='fa-solid fa-user'>";
+                            // echo "</i>";
+
+                                echo "<div class='user-curation'>";
+
+                                $favArtist = json_encode($document['artist']);
+                                echo "$favArtist";
+                                echo "</div>";
+                            };
+
+                        echo "</div>";
+                        ?>
                     </div>
                 </div>
                 <div class="profile-intro">
@@ -225,9 +246,30 @@
                         <h3>Favorite Albums</h3>
                         <a href="addFavoriteAlbum.php">Add an album</a>   
                     </div>
-                    <p>RETRIEVE ALBUMS FROM USER_LIBRARY DATABASE</p>
+                    <!-- <p>RETRIEVE ALBUMS FROM USER_LIBRARY DATABASE</p> -->
                     <div class="friends-box">
                         <!-- if statement that adds users to box when user has followers/friends -->
+                        <?php
+                        echo "<div class='friends-box'>";
+
+                            // will use foreach loop to retrieve each album in the logged in User's favoriteAlbum array
+                            $favoriteAlbums = $user['library']['favoriteAlbums'];
+                            // $favTrackAlbum = json_encode($favoriteTracks['album']);
+
+                            foreach($favoriteAlbums as $document) {
+                            // echo "<i class='fa-solid fa-user'>";
+                            // echo "</i>";
+
+                                echo "<div class='user-curation'>";
+
+                                $favAlbum = json_encode($document['album']);
+                                $favArtist = json_encode($document['artist']);
+                                echo "$favAlbum by $favArtist";
+                                echo "</div>";
+                            };
+
+                        echo "</div>";
+                        ?>
                     </div>
                 </div>
             </div>
