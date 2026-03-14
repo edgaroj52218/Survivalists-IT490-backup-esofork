@@ -154,7 +154,7 @@
             <p>This is our dashboard. I made the box extra big so there's actually room for the stuff we're supposed to add. 
                Remember that we can change everything if you don't like it.</p>
 
-            <form class="searchBar" method="POST" action="">
+            <form class="searchBar" id="searchForm">
                 <input type="text" name="userInput" class="searchInput" placeholder="Search for songs, albums..." required>
                 <button type="submit" class="searchButton">Find</button>
 
@@ -195,5 +195,56 @@ document.querySelectorAll("input[name='userFilters[]']").forEach(cb => {
     });
 });
 
+// this will hide or show information for the result, and it will get the id so it can togle
+function toggleDetails(id){
 
+    // gettig the element that has all the details. 
+    // i used this refrence to understan better the getElementById: https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById 
+    let el = document.getElementById("details-"+id);
+
+    if(el.style.display === "none"){
+        el.style.display = "block";
+    }else{
+        el.style.display = "none";
+    }
+
+}
+
+// i used this this link to understand the EventListener better. Which allowed me to listen for the submit even when the user seachr something
+//REF: https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+document.getElementById("searchForm").addEventListener("submit", function(e){
+
+	e.preventDefault();
+   // here i try to get what the user typed.
+    // REF: https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelector
+	const searchValue = document.querySelector(".searchInput").value;
+
+	const filters = [];
+// i used those links so i can understand better and i can implement a loopthat goes through all the checkboxes
+//REF: https://developer.mozilla.org/en-US/docs/Web/API/NodeList/forEach AND https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:checked
+	document.querySelectorAll("input[name='userFilters[]']:checked").forEach(cb=>{
+		filters.push(cb.value);
+	});
+// using fetch here helps me to send the req to the php file
+// REF: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+	fetch("searchBar.php",{
+		method:"POST",
+		headers:{
+			"Content-Type":"application/json"
+		},
+
+                // here i used this ref so i can  convert the data to json so i can send it to the php file 
+		// REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify
+		body:JSON.stringify({
+			artist:searchValue,
+			filters:filters
+		})
+	})
+
+     // response allows me to get the resonse thats on the server, and changed to json
+     // REEF: https://developer.mozilla.org/en-US/docs/Web/API/Response/json
+	.then(res=>res.json())
+	.then(data=>{
+
+		let html="";
 </script>
