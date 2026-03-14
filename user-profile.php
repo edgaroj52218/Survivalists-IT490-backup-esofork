@@ -1,19 +1,18 @@
 <?php
-    require 'vendor/autoload.php'; 
+require 'vendor/autoload.php';
 
-	if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
-		header('Location: login.html');
-		exit();
-	} else {
-        $uri = "mongodb://100.105.160.23:27017/";
-    
-        $client = new MongoDB\Client($uri);
-        $database = $client->survivalists_db;
-        $userCollection = $database->reg_users;
-        
-        $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
+if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
+    header('Location: login.html');
+    exit();
+} else {
+    $uri = "mongodb://100.105.160.23:27017/";
 
-    }
+    $client = new MongoDB\Client($uri);
+    $database = $client->survivalists_db;
+    $userCollection = $database->reg_users;
+
+    $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
+}
 ?>
 
 <!-- video ref used for basic page template: https://www.youtube.com/watch?v=NljIHlZRTTE (PT 1) -->
@@ -67,27 +66,27 @@
                     <i class="fa-solid fa-circle-user"></i>
                     <div>
                         <?php
-                            echo "<h3>";
-                            
-                            // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
-                            $username = $user['username'];
-                            echo $username;
-                            
-                            echo "</h3>";
+                        echo "<h3>";
+
+                        // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
+                        $username = $user['username'];
+                        echo $username;
+
+                        echo "</h3>";
                         ?>
                         <?php
-                            echo "<p>";
+                        echo "<p>";
 
-                            // <p>RETRIEVE FOLLOWER COUNTER FROM DATABASE</p>
-                            $followerCount = count($user['followers']);
-                            
-                            if($followerCount == null || $followerCount == 0) {
-                                echo "No followers yet.";
-                            } else {
-                                echo "Followed by $followerCount other(s)";
-                            }
+                        // <p>RETRIEVE FOLLOWER COUNTER FROM DATABASE</p>
+                        $followerCount = count($user['followers']);
 
-                            echo "</p>";
+                        if ($followerCount == null || $followerCount == 0) {
+                            echo "No followers yet.";
+                        } else {
+                            echo "Followed by $followerCount other(s)";
+                        }
+
+                        echo "</p>";
 
                         ?>
                     </div>
@@ -105,36 +104,36 @@
                     </div>
 
                     <?php
-                        echo "<p>";
+                    echo "<p>";
 
-                        // <p>RETRIEVE COUNTER OF FOLLOWING FROM DATABASE</p>
-                        $followingCount = count($user['following']);
-                        if($followingCount == null) {
-                                echo "Not following anyone yet.";
-                            } else {
-                                echo $followingCount;
-                            }
-                        echo "</p>";
-                    
-                        echo "<div class='friends-box'>";
+                    // <p>RETRIEVE COUNTER OF FOLLOWING FROM DATABASE</p>
+                    $followingCount = count($user['following']);
+                    if ($followingCount == null) {
+                        echo "Not following anyone yet.";
+                    } else {
+                        echo $followingCount;
+                    }
+                    echo "</p>";
 
-                            // RETRIEVE USERNAMES OF PEOPLE USER IS FOLLOWING
-                            // will use foreach loop to retrieve each username of the items in the logged in User's follower array
-                            // REF for foreach loop w/ arrays: https://www.php.net/manual/en/control-structures.foreach.php
-							// REF for pulling logged in User object data from Mongo: https://stackoverflow.com/questions/26716035/display-mongodb-collections-using-html-file
-                            $following = $user['following'];
+                    echo "<div class='friends-box'>";
 
-                            foreach($following as $document) {
+                    // RETRIEVE USERNAMES OF PEOPLE USER IS FOLLOWING
+                    // will use foreach loop to retrieve each username of the items in the logged in User's follower array
+                    // REF for foreach loop w/ arrays: https://www.php.net/manual/en/control-structures.foreach.php
+                    // REF for pulling logged in User object data from Mongo: https://stackoverflow.com/questions/26716035/display-mongodb-collections-using-html-file
+                    $following = $user['following'];
 
-                                echo "<div class='user-curation'>";
-                                    echo "<i class='fa-solid fa-user'>";
-                                        echo "&nbsp";
-                                        echo ($document);
-                                    echo "</i>";
-                                echo "</div>";
-                            };
+                    foreach ($following as $document) {
 
+                        echo "<div class='user-curation'>";
+                        echo "<i class='fa-solid fa-user'>";
+                        echo "&nbsp";
+                        echo ($document);
+                        echo "</i>";
                         echo "</div>";
+                    };
+
+                    echo "</div>";
                     ?>
                 </div>
                 <div class="profile-intro">
@@ -144,26 +143,26 @@
                     </div>
                     <!-- <p>RETRIEVE TRACKS FROM USER_LIBRARY DATABASE</p> -->
                     <?php
-                        echo "<div class='friends-box'>";
+                    echo "<div class='friends-box'>";
 
-                        // will use foreach loop to retrieve each track of the items in the logged in User's favoriteTracks
-                        $favoriteTracks = $user['library']['favoriteTracks'];
-                        // $favTrackTitle = json_encode($favoriteTracks['title']);
-                        // $favTrackArtist = json_encode($favoriteTracks['artist']);
+                    // will use foreach loop to retrieve each track of the items in the logged in User's favoriteTracks
+                    $favoriteTracks = $user['library']['favoriteTracks'];
+                    // $favTrackTitle = json_encode($favoriteTracks['title']);
+                    // $favTrackArtist = json_encode($favoriteTracks['artist']);
 
-                            foreach($favoriteTracks as $document) {
-                            // echo "<i class='fa-solid fa-user'>";
-                            // echo "</i>";
+                    foreach ($favoriteTracks as $document) {
+                        // echo "<i class='fa-solid fa-user'>";
+                        // echo "</i>";
 
-                                echo "<div class='user-curation'>";
+                        echo "<div class='user-curation'>";
 
-                                $favTrackTitle = json_encode($document['title']);
-                                $favTrackArtist = json_encode($document['artist']);
-                                echo "$favTrackTitle by $favTrackArtist";
-                                echo "</div>";
-                            };
-
+                        $favTrackTitle = ($document['title']);
+                        $favTrackArtist = ($document['artist']);
+                        echo "$favTrackTitle by $favTrackArtist";
                         echo "</div>";
+                    };
+
+                    echo "</div>";
                     ?>
                 </div>
                 <div class="profile-intro">
@@ -181,16 +180,16 @@
                         $favoriteArtists = $user['library']['favoriteArtists'];
                         // $favTrackArtist = json_encode($favoriteArtists['artist']);
 
-                            foreach($favoriteArtists as $document) {
+                        foreach ($favoriteArtists as $document) {
                             // echo "<i class='fa-solid fa-user'>";
                             // echo "</i>";
 
-                                echo "<div class='user-curation'>";
+                            echo "<div class='user-curation'>";
 
-                                $favArtist = json_encode($document['artist']);
-                                echo "$favArtist";
-                                echo "</div>";
-                            };
+                            $favArtist = ($document['artist']);
+                            echo "$favArtist";
+                            echo "</div>";
+                        };
 
                         echo "</div>";
                         ?>
@@ -199,7 +198,7 @@
                 <div class="profile-intro">
                     <div class="title-box">
                         <h3>Favorite Albums</h3>
-                        <a href="addFavoriteAlbum.php">Add an album</a>   
+                        <a href="addFavoriteAlbum.php">Add an album</a>
                     </div>
                     <!-- <p>RETRIEVE ALBUMS FROM USER_LIBRARY DATABASE</p> -->
                     <div class="friends-box">
@@ -207,21 +206,21 @@
                         <?php
                         echo "<div class='friends-box'>";
 
-                            // will use foreach loop to retrieve each album in the logged in User's favoriteAlbum array
-                            $favoriteAlbums = $user['library']['favoriteAlbums'];
-                            // $favTrackAlbum = json_encode($favoriteTracks['album']);
+                        // will use foreach loop to retrieve each album in the logged in User's favoriteAlbum array
+                        $favoriteAlbums = $user['library']['favoriteAlbums'];
+                        // $favTrackAlbum = json_encode($favoriteTracks['album']);
 
-                            foreach($favoriteAlbums as $document) {
+                        foreach ($favoriteAlbums as $document) {
                             // echo "<i class='fa-solid fa-user'>";
                             // echo "</i>";
 
-                                echo "<div class='user-curation'>";
+                            echo "<div class='user-curation'>";
 
-                                $favAlbum = json_encode($document['album']);
-                                $favArtist = json_encode($document['artist']);
-                                echo "$favAlbum by $favArtist";
-                                echo "</div>";
-                            };
+                            $favAlbum = ($document['album']);
+                            $favArtist = ($document['artist']);
+                            echo "$favAlbum by $favArtist";
+                            echo "</div>";
+                        };
 
                         echo "</div>";
                         ?>
@@ -234,26 +233,33 @@
                         <h3>Who to Follow</h3>
                     </div>
                     <div class="friends-box">
-                        <?php 
+                        <?php
 
-                            // FOREACH LOOP THAT WILL GO THROUGH THE DIFFERENT REGISTERED USER OBJECTS' USERNAMES IN REG_USERS COLLECTION (MINUS THE LOGGED IN USER)
-                            // show top 5 results
-                            // REF: https://www.tutorialspoint.com/php_mongodb/php_mongodb_limit_records.htm
-                            
-                            $filter = [];
+                        // FOREACH LOOP THAT WILL GO THROUGH THE DIFFERENT REGISTERED USER OBJECTS' USERNAMES IN REG_USERS COLLECTION (MINUS THE LOGGED IN USER)
+                        // show top 5 results
+                        // REF: https://www.tutorialspoint.com/php_mongodb/php_mongodb_limit_records.htm
 
-                            $options = ['limit' => 5];
+                        $filter = [];
 
-                            $users = $userCollection->find($filter, $options);
-                            
-                            foreach($users as $document) {
+                        $options = ['limit' => 5];
+
+                        $users = $userCollection->find($filter, $options);
+
+                        foreach ($users as $document) {
                             // echo "<i class='fa-solid fa-user'>";
                             // echo "</i>";
 
-                                echo "<div class='user-curation'>";
-                                $recommendUsername = $document['username'];
-                                echo "</div>";
-                            };
+                            echo "<div class='user-curation'>";
+                            $recommendUsername = $document['username'];
+                            if ($recommendUsername != $username) {
+                                echo $recommendUsername;
+                                echo "&nbsp";
+                                echo "<a href='button'>Follow"; // will need to change this to a button that calls followUser() in serverRabbitMQ.php
+                                echo "</a>";
+                            } else {
+                            }
+                            echo "</div>";
+                        };
 
                         ?>
                     </div>
@@ -269,65 +275,61 @@
 
                 </div> -->
 
+                <!-- integrate kate's search bar here -->
+                <a href="createPost.php">Make a new post</a>
+
                 <?php
-                    $userPosts = $user['posts'];
-                    foreach($userPosts as $document) {
+                $userPosts = $user['posts'];
+                foreach ($userPosts as $document) {
                     echo "<div class='post-container'>";
-                        echo "<div class='post-row'>";
-                            echo "<div class='user-profile'>";
-                                echo "<i class='fa-solid fa-circle-user'>";
-                                echo "</i>";
-                                // <!-- will modify to user icons instead of images -->
-                                echo "<div>";
-                                    // <!-- <p>RETRIEVE USERNAME FROM POST DATABASE</p> -->
-                                    
-                                    echo "<p>";
-                                    
-                                    // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
-                                    $username = $user['username'];
-                                    $media = json_encode($userPosts['media']);
-                                    $content = json_encode($userPosts['content']);                             
-                                    $postedAt = json_encode($userPosts['postedAt']);
+                    echo "<div class='post-row'>";
+                    echo "<div class='user-profile'>";
+                    echo "<i class='fa-solid fa-circle-user'>";
+                    echo "</i>";
+                    // <!-- will modify to user icons instead of images -->
+                    echo "<div>";
+                    // <!-- <p>RETRIEVE USERNAME FROM POST DATABASE</p> -->
 
-                                    echo $username;
-                                    
-                                    echo "</p>";    
-                                    
-                                    echo "<span>";
+                    echo "<p>";
 
-                                    echo $postedAt;
+                    // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
+                    $username = $user['username'];
+                    
+                    // user posts are populated as objects into posts array will need to access them as strings or arrays to get the postDetails
+                    // ref (went with the accessing of the MongoDB document's properties): https://www.mongodb.com/community/forums/t/accessing-object-value-from-nested-objects-in-mongodb-with-php/200733
 
-                                    echo "</span>";
-                                                
-                                    // RETRIEVE DATE OBJECT FROM LOGGED IN USER'S POSTS ARRAY BY ITERATING W/ FOREACH LOOP
-                                    
 
-                                    echo "<p class='post-text'>";
-                                    echo $media;
-                                    echo $content;
-                                    echo "</p>";
+                    $media = $document->media;
+                    $content = $document->content;
+                    $postedAt = $document->postedAt;
 
-                                echo "</div>";
-                            echo "</div>";
-                            echo "<a href='#'>";
-                            echo "<i class='fas fa-ellipsis-v'></i></a>";
-                        echo "</div>";
+                    echo $username;
 
-                        // <!-- <p class="post-text">RETRIEVE USERNAME FROM POST DATABASE</p> -->
-                        
-                        // <div class="post-row">
-                        //     <div class="activity-icons">
-                        //         <div><img src="../images/like.png" alt="like"> RETRIEVE COUNTER OBJECT FROM POST DATABASE
-                        //         </div>
-                        //         <div><img src="../images/comments.png" alt="comments"> RETRIEVE COUNTER OBJECT FROM POST
-                        //             DATABASE</div>
-                        //         <div><img src="../images/share.png" alt="shares"> RETRIEVE COUNTER OBJECT FROM POST DATABASE
-                        //         </div>
+                    echo "</p>";
 
-                        //     </div>
-                        // </div>
-                        echo "</div>";
-                    };
+                    echo "<span>";
+
+                    echo $postedAt;
+
+                    echo "</span>";
+
+                    // RETRIEVE DATE OBJECT FROM LOGGED IN USER'S POSTS ARRAY BY ITERATING W/ FOREACH LOOP
+
+
+                    echo "<p class='post-text'>";
+                    echo $media;
+                    echo "&nbsp";
+                    echo $content;
+                    echo "</p>";
+
+                    echo "</div>";
+                    echo "</div>";
+                    echo "<a href='#'>";
+                    echo "<i class='fas fa-ellipsis-v'></i></a>";
+                    echo "</div>";
+
+                    echo "</div>";
+                };
                 ?>
             </div>
         </div>
