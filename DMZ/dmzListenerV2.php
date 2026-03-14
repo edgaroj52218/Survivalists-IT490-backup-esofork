@@ -59,7 +59,7 @@ function userSearch($userInput) {
 
     $url = "https://openapi.tidal.com/v2/searchResults/$query?explicitFilter=INCLUDE&countryCode=US&include=artists,albums,tracks";
     // $url = "https://openapi.tidal.com/v2/searchResults/$query?explicitFilter=INCLUDE&countryCode=US&include=artists&include=albums&include=tracks";
-
+    // URL was wrong so i changed in the way that will return the information in the correct way.
     $ch = curl_init($url);
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -96,7 +96,8 @@ function filterArtists($data){
                 $artists[] = [
                     "id"=>$item['id'] ?? '',
                     "name"=>$item['attributes']['name'] ?? '',
-                    "popularity"=>$item['attributes']['popularity'] ?? 0
+                    "popularity"=>$item['attributes']['popularity'] ?? 0,
+                    "type" => "artist"
                 ];
 
             }
@@ -125,7 +126,10 @@ function filterAlbums($data){
                  // adding the album info
                 $albums[] = [
                     "id"=>$item['id'] ?? '',
-                    "title"=>$item['attributes']['title'] ?? ''
+                    "title"=>$item['attributes']['title'] ?? '',
+                    "type"=>"album",
+                    "no_of_volume" => $item['attributes']['numberOfVolumes'] ?? 0,
+                    "no_of_item"   => $item['attributes']['numberOfItems'] ?? 0
                  ];
 
              }
@@ -143,7 +147,11 @@ function filterAlbums($data){
 
                 $albums[] = [
                     "id"=>$item['id'] ?? '',
-                    "title"=>$item['attributes']['title'] ?? ''
+                    "title"=>$item['attributes']['title'] ?? '',
+                    "type" => "album",
+                    "no_of_volume" => $item['attributes']['numberOfVolumes'] ?? 0,
+                   "no_of_item"   => $item['attributes']['numberOfItems'] ?? 0
+
                 ];
 
             }
@@ -170,7 +178,8 @@ function filterTracks($data){
 		 // adding the track info 
                 $tracks[] = [
                     "id"=>$item['id'] ?? '',
-                    "title"=>$item['attributes']['title'] ?? ''
+                    "title"=>$item['attributes']['title'] ?? '',
+                    "type"=>"track"
                   ];
 
              }
@@ -188,7 +197,8 @@ function filterTracks($data){
 
                 $tracks[] = [
                     "id"=>$item['id'] ?? '',
-                    "title"=>$item['attributes']['title'] ?? ''
+                    "title"=>$item['attributes']['title'] ?? '',
+                    "type"=>"track"
                 ];
 
             }
@@ -202,6 +212,9 @@ function filterTracks($data){
 
 function searchWithFilter($artist,$type){
 
+    // Commenting this out because is not working and its making my the search failed.
+
+    /* 
     global $tidalCollection;
 
     $search = $tidalCollection->findOne(['userInput'=>$artist]);
@@ -261,6 +274,19 @@ function searchWithFilter($artist,$type){
         case 'tracks': return filterTracks($data);
         default: return [];
     }
+   */
+
+    // Implementing this to fix the issue on the commented logic that is above. This will call the function
+    // and it will search for the artist and it will store the response on the data ($data) 
+    $data = userSearch($artist);
+    //print_r($data['included']);
+    switch($type){
+        case 'artists': return filterArtists($data);
+        case 'albums': return filterAlbums($data);
+        case 'tracks': return filterTracks($data);
+        default: return [];
+    }
+
 }
 
 function requestProcessor($request)
@@ -269,13 +295,14 @@ function requestProcessor($request)
 
     if(!isset($request['type']))
     {
+
         return array("returnCode" => '1', "message" => "This is an invalid request type");
     }
 
     if($request['type'] == "search")
     {
         $artist = $request['artist'];
-         $filter = $request['filter']; 
+        $filter = $request['filter'];
 
         $results = searchWithFilter($artist,$filter);
 
@@ -284,6 +311,7 @@ function requestProcessor($request)
 
     return "Unknown request";
 }
+
 
 $server = new rabbitMQServer("testRabbitMQ.ini","testDMZ");
 echo "RabbitMQ Server Started".PHP_EOL;
