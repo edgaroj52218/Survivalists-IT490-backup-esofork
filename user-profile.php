@@ -56,52 +56,6 @@
             </div>
         </div>
 
-        <!-- settings -->
-        <!-- the original tutorial utilized javascript so I found a resource that utilizes a hidden checkbox to show dropdown -->
-        <!-- reference: https://codepen.io/markcaron/pen/wdVmpB -->
-
-        <!-- <div class="dropdown"> -->
-        <!-- <input type="checkbox" id="settings-dropdown" value="" name="settings-checkbox"> -->
-        <!-- <label for="settings-dropdown"> <img src="../images/profile-pic.png"
-                    alt="profile-pic">
-            </label> -->
-        <!-- <div class="settings-menu">
-            <div class="settings-menu-inner">
-                <div class="user-profile">
-                    <img src="../images/profile-pic.png" alt="profile-pic">
-                    <div>
-                        <p>Bruce Wayne</p>
-                        <a href="#">See your profile</a>
-                    </div>
-                </div>
-                <hr>
-                <div class="user-profile">
-                    <img src="../images/feedback.png" alt="feedback">
-                    <div>
-                        <p>Give Feedback</p>
-                        <a href="#">Help us improve your experience</a>
-                    </div>
-                </div>
-                <hr>
-                <div class="settings-links">
-                    <img src="../images/settings.png" alt="settings" class="settings-icon">
-                    <a href="#">Settings & Privacy <img src="../images/arrow.png" alt="arrow" width="10px" ;></a>
-                </div>
-                <div class="settings-links">
-                    <img src="../images/help.png" alt="settings" class="settings-icon">
-                    <a href="#">Help & Support <img src="../images/arrow.png" alt="arrow" width="10px" ;></a>
-                </div>
-                <div class="settings-links">
-                    <img src="../images/display.png" alt="settings" class="settings-icon">
-                    <a href="#">Display & Accessibility <img src="../images/arrow.png" alt="arrow" width="10px"></a>
-                </div>
-                <div class="settings-links">
-                    <img src="../images/logout.png" alt="settings" class="settings-icon">
-                    <a href="#">Logout <img src="../images/arrow.png" alt="arrow" width="10px"></a>
-                </div>
-            </div>
-        </div>
-        </div> -->
     </nav>
 
     <!-- profile page -->
@@ -273,37 +227,47 @@
                         ?>
                     </div>
                 </div>
+                <div class="profile-intro">
+                    <div class="title-box">
+                        <!-- follow recommendations (temporarily will be on left side bar but will update in the future to be on the right </p> -->
+
+                        <h3>Who to Follow</h3>
+                    </div>
+                    <div class="friends-box">
+                        <?php 
+
+                            // FOREACH LOOP THAT WILL GO THROUGH THE DIFFERENT REGISTERED USER OBJECTS' USERNAMES IN REG_USERS COLLECTION (MINUS THE LOGGED IN USER)
+                            // show top 5 results
+                            // REF: https://www.tutorialspoint.com/php_mongodb/php_mongodb_limit_records.htm
+                            
+                            $filter = [];
+
+                            $options = ['limit' => 5];
+
+                            $users = $userCollection->find($filter, $options);
+                            
+                            foreach($users as $document) {
+                            // echo "<i class='fa-solid fa-user'>";
+                            // echo "</i>";
+
+                                echo "<div class='user-curation'>";
+                                $recommendUsername = $document['username'];
+                                echo "</div>";
+                            };
+
+                        ?>
+                    </div>
+                </div>
             </div>
             <div class="post-col">
-                <div class="write-post-container">
+                <!-- commented out the write post container because searchBar.php will be implemented from kate, so media and content can be populated and inserted on that page instead -->
+
+                <!-- <div class="write-post-container">
                     <div class="user-profile">
                         <i class="fa-solid fa-circle-user"></i>                    
                     </div>
 
-                    <div class="post-input-container">
-                        <!-- should be some sort of search text box that drops down and populates with related seach results -->
-                        <div class="post-search-box">
-                            <img src="../images/search.png" alt="search icon">
-                            <?php
-
-                            $username = $user['username'];
-
-                            echo "<input type='text'";
-                            echo "placeholder='What are you listening to, ";
-                            echo $username;
-                            echo "?'>";
-
-                            ?>
-                        </div>
-                        <textarea rows="3" placeholder="Say something..."></textarea>
-                <button type="button" id="submit-btn">Submit</button>
-
-
-                        <div class="add-post-links"> <!-- figure out the embed logic for playback -->
-                            <a href="#"><img src="../images/video.png" alt="video">Live Video</a>
-                        </div>
-                    </div>
-                </div>
+                </div> -->
 
                 <?php
                     $userPosts = $user['posts'];
