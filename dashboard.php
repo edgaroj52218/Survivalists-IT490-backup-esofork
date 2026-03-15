@@ -1,15 +1,25 @@
 <?php
-	if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
+	require 'vendor/autoload.php'; 
+
+    if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
 		header('Location: login.html');
 		exit();
-	}
+	} else {
+        $uri = "mongodb://100.105.160.23:27017/";
+    
+        $client = new MongoDB\Client($uri);
+        $database = $client->survivalists_db;
+        $userCollection = $database->reg_users;
+        
+        $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
+    }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Survivalists - Dashboard</title>
+    <title>Survivalists | Dashboard</title>
     <style>
         /* I picked this font but we can change it later on. Link that i accessed:
         https://fonts.google.com/specimen/Playfair+Display
@@ -96,13 +106,27 @@
             <div class="profileUser">
                 <!-- i got the image from here: https://unsplash.com/photos/collection-of-various-music-album-covers-998pvuxqK6Y -->
                 <img src="images/dashboardImage.jpg" alt="User">
-                <h1>Welcome back, Survivalist!</h1>
+                <h1>
+                    <?php
+                        echo "Hello, ";
+                        $username = $user['username'];
+                        echo $username;
+                        echo "!"
+                    ?>
+                </h1>
             </div>
             <span class="status">SESSION ACTIVE</span>
         </div>
         <div class="content">
-            <p>This is our dashboard. I made the box extra big so there's actually room for the stuff we're supposed to add. 
-               Remember that we can change everything if you don't like it.</p>
+                <a href="addFavoriteTrack.php" class="href">Add a favorite track</a>
+                <br>
+                <a href="addFavoriteArtist.php" class="href">Add a favorite artist</a>
+                <br>
+                <a href="addFavoriteAlbum.php" class="href">Add a favorite album</a>
+                <br>
+                <a href="user-profile.php" class="href">Profile</a>
+                <br>
+                <a href="createPost.php" class="href">Create post</a>
         </div>
         <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
         https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
