@@ -191,6 +191,21 @@
         https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
         <a href="home.html" class="logoutButton">Log out &rarr;</a>
     </div>
+
+    <!-- this will be the right card where the user can post-->
+	<div class="postCard">
+            <h2>Create a Post</h2>
+            <div id="selectedMediaPreview">
+                <div class="previewEmpty">Select an artist, album or track to post about.</div>
+            </div>
+            <textarea id="postContent" placeholder="Share your thoughts..."></textarea>
+            <!-- Hiding the button so they dont press it before the select something to post
+		    my reference was: https://www.w3schools.com/Tags/att_button_disabled.asp-->
+            <button id="submitPostBtn" disabled>Post</button>
+            <div id="postFeedback"></div>
+        </div>
+    </div>
+
 </body>
 </html>
 
@@ -266,10 +281,15 @@ document.getElementById("searchForm").addEventListener("submit", function(e){
      // REEF: https://developer.mozilla.org/en-US/docs/Web/API/Response/json
 	.then(res=>res.json())
 	.then(data=>{
-		let html="";
+                let artists = data.filter(item => item.type === 'artist');
+                let others = data.filter(item => item.type !== 'artist');
 
+                artists.sort((a,b) => (b.popularity ?? 0) -(a.popularity ?? 0));
+
+                let sortedData = [...artists, ...others]; 
+		let html="";
                
-		data.forEach((item,index)=>{
+		sortedData.forEach((item,index)=>{
             //since some of the results can be artist or album/track, i added the  ?? so it can display whatever that is there
            // REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing
 			let name=item.name ?? item.title;
