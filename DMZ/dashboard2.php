@@ -10,6 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Survivalists - Dashboard</title>
+<!--<link rel="stylesheet" href="/user/style.css"-->
     <style>
         /* I picked this font but we can change it later on. Link that i accessed:
         https://fonts.google.com/specimen/Playfair+Display
@@ -161,6 +162,7 @@
     </style>
 </head>
 <body>
+
     <div class="dashboard">
         <div class="header">
             <div class="profileUser">
@@ -189,7 +191,7 @@
         </div>
         <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
         https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
-        <a href="home.html" class="logoutButton">Log out &rarr;</a>
+        <a href="userProfile.php" class="logoutButton">Back to Profile &rarr;</a>
     </div>
 
     <!-- this will be the right card where the user can post-->
@@ -338,12 +340,12 @@ document.getElementById("searchForm").addEventListener("submit", function(e){
           // understandind the literals, helped me to build the card for the results
           // REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 			html += `
-                <div class="resultCard">
+                <div class="resultCard" id="card-${index}">
                     <b>${name}</b><br>
                     ID: ${item.id}<br>
 
                     <button onclick="toggleDetails(${index})" class="viewMoreButton">View More</button>
-
+                    <button onclick="pickItem('${encoded}', ${index})" class="postThisButton">Post This</button>
                    <!-- this section will display the info that i hid-->
                     <div id="details-${index}" style="display:none;margin-top:10px;">
                         ${popularity}
@@ -355,6 +357,12 @@ document.getElementById("searchForm").addEventListener("submit", function(e){
             `;
 
 		});
+
+                   / here i reset the right part when there is a new search
+		       pickedItem = null;
+                       document.getElementById("submitPostBtn").disabled = true;
+                       document.getElementById("selectedMediaPreview").innerHTML =
+                    '<div class="previewEmpty">Select an artist, album or track to post about.</div>';
                  // adding the results to the page
 		document.getElementById("results").innerHTML=html;
 
