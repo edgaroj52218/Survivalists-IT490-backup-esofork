@@ -1,6 +1,10 @@
 <?php
-require __DIR__.'/vendor/autoload.php';
-
+//require __DIR__ .  '/../vendor/autoload.php';
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+echo "Hi";
+die;
+require __DIR__.'/vendor/autoload.php'
 if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
     header('Location: login.html');
     exit();
@@ -12,46 +16,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     $userCollection = $database->reg_users;
 
     $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
-    
-    $username = $user['username'];
-
-    // logic for following user when follow button pressed
-    if(isset($_POST['follow_user'])){
-
-        $followUser = $_POST['follow_user']; // retrieve userFollowed username
-
-        // remove the sent username from the logged in user's following array
-        $userCollection->updateOne(
-            ["username" => $username],
-            [
-                '$addToSet' => [
-                    "following" => $followUser
-                ]
-            ]
-        );
-
-        header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
-    }
-
-    // logic for unfollowing user when unfollow button pressed
-    if(isset($_POST['unfollow_user'])){
-
-        $unfollowUser = $_POST['unfollow_user']; // retrieve userUnfollowed username
-
-        // remove the sent username from the logged in user's following array
-        $userCollection->updateOne(
-            ["username" => $username],
-            [
-                '$pull' => [
-                    "following" => $unfollowUser
-                ]
-            ]
-        );
-
-        header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
-    }
 }
 ?>
 
@@ -74,22 +38,24 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
     <nav>
         <div class="nav-left">
-            <h3 class="logo">SocialTune</h3>
+            <img src="../images/sample.png" alt="logo" class="logo">
 
             <!-- will eventually adjust nav items accordingly for future deliverables AKA these are just placeholders for now -->
             <!-- will use fontawesome icons for navbars -->
 
             <ul>
-            <!-- updated links on nav bar -->
-                <li><a href="feed.php">Feed</a></li>
-                &nbsp;
-                &nbsp;
-                <li><a href="dashboard2.php">Search Library</a></li>
+                <li><img src="images/notification.jpg" alt="notifications"></li>
+                <li><img src="images/inbox.png" alt="inbox"></li>
+                <li><img src="images/video.png" alt="video"></li>
             </ul>
         </div>
         <div class="nav-right">
+            <div class="search-box">
+                <img src="../images/search.png" alt="search icon">
+                <input type="text" placeholder="Search">
+            </div>
             <div class="nav-user-icon online">
-                <a href="userProfile.php">Profile</a>
+                <i class="fa-solid fa-circle-user"></i>
             </div>
         </div>
 
@@ -138,6 +104,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                 <div class="profile-intro">
                     <div class="title-box">
                         <h3>Following</h3>
+                        <a href="#">View Following</a>
                     </div>
 
                     <?php
@@ -272,74 +239,33 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     <div class="friends-box">
                         <?php
 
-                            // FOREACH LOOP THAT WILL GO THROUGH THE DIFFERENT REGISTERED USER OBJECTS' USERNAMES IN REG_USERS COLLECTION (MINUS THE LOGGED IN USER)
-                            // REF: https://www.tutorialspoint.com/php_mongodb/php_mongodb_limit_records.htm
+                        // FOREACH LOOP THAT WILL GO THROUGH THE DIFFERENT REGISTERED USER OBJECTS' USERNAMES IN REG_USERS COLLECTION (MINUS THE LOGGED IN USER)
+                        // show top 5 results
+                        // REF: https://www.tutorialspoint.com/php_mongodb/php_mongodb_limit_records.htm
 
-                            // scrapped and fixed original follow button logic 
+                        $filter = [];
 
-                            $filter = [];
+                        $options = ['limit' => 5];
 
-                            $options = ['limit' => 5]; // show top 5 results
-                            
-                            // goes through reg_users database and limits to five
-                            $users = $userCollection->find($filter, $options);
+                        $users = $userCollection->find($filter, $options);
 
-                            if(isset($user['following'])) {
-                                $followingList = $user['following']; // retrieve logged in user's following list
+                        foreach ($users as $document) {
+                            // echo "<i class='fa-solid fa-user'>";
+                            // echo "</i>";
+
+                            echo "<div class='user-curation'>";
+                            $recommendUsername = $document['username'];
+                            if ($recommendUsername != $username) {
+                                echo $recommendUsername;
+                                echo "&nbsp";
+                                //echo "<a href='button'>Follow"; // will need to change this to a button that calls followUser() in serverRabbitMQ.php
+                                echo "<button onclick='followUser()'>Follow</button>";
+                                echo "</a>";
                             } else {
-                                $followingList = [];
                             }
+                            echo "</div>";
+                        };
 
-                            // loop through each of the five recommended users
-                            foreach($users as $document) {
-
-                                $recommendUsername = $document['username']; // username of the current user during iteration
-
-                                // needs to make sure recommended user is not logged in user
-                                if($recommendUsername != $username) {
-
-                                    // populate the table w/ current user pointer's username
-                                    echo "<div class='user-curation'>";
-                                    echo $recommendUsername;
-                                    echo "&nbsp";
-
-                                    $isFollowing = false; 
-
-                                    // loop through the following list of logged in user
-
-                                    // for every person followed in followingList
-                                    foreach($followingList as $userFollowed) {
-                                        if($userFollowed == $recommendUsername) { // check to see if current user pointer in following array == one of the recommended usernames
-                                            $isFollowing = true;
-                                            break; 
-                                        }
-                                    }
-
-                                    // follow/unfollow button
-                                    if($isFollowing) {
-
-                                        echo "<form method='post' style='display:inline'>";
-                                        echo "<input type='hidden' name='unfollow_user' value='";
-                                        echo $recommendUsername; //when pressed, send the affected username to remove from user's following array
-                                        echo "'>";
-                                        echo "<button type='submit' class='unfollow-btn'>Unfollow</button>"; // button styling
-                                        echo "</form>";
-
-                                    } else {
-
-                                        echo "<form method='post' style='display:inline'>";
-                                        echo "<input type='hidden' name='follow_user' value='";
-                                        echo $recommendUsername; //vice versa
-                                        echo "'>";
-                                        echo "<button type='submit' class='follow-btn'>Follow</button>"; // diff button styling for unfollowing
-                                        echo "</form>";                
-
-                                    }
-
-                                    echo "</div>";
-
-                                }
-                            }
                         ?>
                     </div>
                 </div>
@@ -355,8 +281,8 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                 </div> -->
 
                 <!-- integrate kate's search bar here -->
-                <!-- created button class for styling -->
-                <a href="mediaSearch.php"><button class='createPost-btn'>+</button></a>
+                <a href="dashboard2.php"><button>+</button></a>
+		
 
                 <?php
                 $userPosts = $user['posts'];
@@ -374,7 +300,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                     // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
                     $username = $user['username'];
-
+                    
                     // user posts are populated as objects into posts array will need to access them as strings or arrays to get the postDetails
                     // ref (went with the accessing of the MongoDB document's properties): https://www.mongodb.com/community/forums/t/accessing-object-value-from-nested-objects-in-mongodb-with-php/200733
 

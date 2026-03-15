@@ -1,5 +1,9 @@
 <?php
-require 'vendor/autoload.php';
+//require 'vendor/autoload.php';
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+require __DIR__.'/vendor/autoload.php';
 
 if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
     header('Location: login.html');
@@ -22,12 +26,23 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 <!DOCTYPE html>
 <html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Friend Profile | SocialTune</title>
+    <link rel="stylesheet" href="/user/style.css">
+    <script src="https://kit.fontawesome.com/95d0fccd5e.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+ 
 <!-- brought over the updated nav bar from userProfile -->
+
     <nav>
         <div class="nav-left">
             <h3 class="logo">SocialTune</h3>
 
-            <!-- will eventually adjust nav items accordingly for future deliverables AKA these are just placeholders for now -->
+            <!-- will eventually adjust nav items accordingly for future deliverables AKA these are just placeholders f>
             <!-- will use fontawesome icons for navbars -->
 
             <ul>
@@ -50,14 +65,17 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     <div class="profile-container">
         <?php
         // need to access each of the users in the logged in user's following array
-        $followingList = $user['following'];
+        $followingList = $user['following'] ?? [];
 
         // for each user in the following array
         foreach ($followingList as $userFollowed) {
 
             // get the current user's posts array that the pointer is pointing at during iterating round
             // following feed in this case will not include the logged in user's personal posts
-            $userPosts = $userFollowed['posts'];
+            //$userPosts = $userFollowed['posts'];
+
+            $followedUser = $userCollection->findOne(['username' => $userFollowed]);
+            $userPosts = $followedUser['posts'];
 
             foreach ($userPosts as $postsMadeByUserFollowed) {
                 echo "<div class='post-container'>";
@@ -92,7 +110,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                 echo "<p class='post-text'>";
                 echo $media;
-                echo $content;
+                echo "<hr/ style='margin-top: 10px;'>".$content;
                 echo "</p>";
 
                 echo "</div>";

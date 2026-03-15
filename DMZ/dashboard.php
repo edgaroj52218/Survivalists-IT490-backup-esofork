@@ -1,25 +1,15 @@
 <?php
-	require 'vendor/autoload.php'; 
-
-    if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
+	if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
 		header('Location: login.html');
 		exit();
-	} else {
-        $uri = "mongodb://100.105.160.23:27017/";
-    
-        $client = new MongoDB\Client($uri);
-        $database = $client->survivalists_db;
-        $userCollection = $database->reg_users;
-        
-        $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
-    }
+	}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Survivalists | Dashboard</title>
+    <title>Survivalists - Dashboard</title>
     <style>
         /* I picked this font but we can change it later on. Link that i accessed:
         https://fonts.google.com/specimen/Playfair+Display
@@ -35,7 +25,8 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+            /*margin: 0;*/
+            overflow: hidden;
         }
         /* I made the dashboard box bigger (width) so we have space to add more stuff, but we can change this value later on */
         .dashboard {
@@ -47,6 +38,7 @@
             box-shadow: 5px 5px 10px #5EBEC4; /* this gives the shiny effect on the right side */
             display: flex;
             flex-direction: column;
+            position: relative;
         }
         .header {
             display: flex;
@@ -86,6 +78,54 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: #000000;
         }
+
+        .content p {
+	   margin-top:100px;
+        }
+
+        .searchBar {
+            display: flex;
+            flex-direction: row; 
+            flex-wrap: wrap; 
+            gap: 10px;
+            width: 700px;
+            position: absolute;
+            top: 145px;  
+            left: 50px;     
+        }
+
+        .searchInput {
+            padding: 8px;
+            width: 50%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .searchButton {
+            padding: 10px 20px;
+            background-color: #5EBEC4;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            font-weight: bold;
+        }
+
+        .searchButton:hover {
+            background-color: #4daeb4; 
+        }
+
+        .checkBoxes {
+            margin-top: -3px;
+            width: 100%;
+            font-size: 14px;
+            display: block;;
+        }
+         
+        .checkBoxes label {
+            margin-right: 15px;
+            cursor: pointer;
+        }
         
         .logoutButton {
             align-self: flex-start;
@@ -106,27 +146,25 @@
             <div class="profileUser">
                 <!-- i got the image from here: https://unsplash.com/photos/collection-of-various-music-album-covers-998pvuxqK6Y -->
                 <img src="images/dashboardImage.jpg" alt="User">
-                <h1>
-                    <?php
-                        echo "Hello, ";
-                        $username = $user['username'];
-                        echo $username;
-                        echo "!"
-                    ?>
-                </h1>
+                <h1>Welcome back, Survivalist!</h1>
             </div>
             <span class="status">SESSION ACTIVE</span>
         </div>
         <div class="content">
-                <a href="addFavoriteTrack.php" class="href">Add a favorite track</a>
-                <br>
-                <a href="addFavoriteArtist.php" class="href">Add a favorite artist</a>
-                <br>
-                <a href="addFavoriteAlbum.php" class="href">Add a favorite album</a>
-                <br>
-                <a href="user-profile.php" class="href">Profile</a>
-                <br>
-                <a href="createPost.php" class="href">Create post</a>
+            <p>This is our dashboard. I made the box extra big so there's actually room for the stuff we're supposed to add. 
+               Remember that we can change everything if you don't like it.</p>
+
+            <form class="searchBar" method="POST" action="searchBar.php">
+                <input type="text" name="userInput" class="searchInput" placeholder="Search for songs, albums..." required>
+                <button type="submit" class="searchButton">Find</button>
+
+                <div class="checkBoxes">
+                    <span>Filter by: </span>
+                    <label><input type="checkbox" name="userFilters[]" value="artists" checked> Artists</label>
+                    <label><input type="checkbox" name="userFilters[]" value="albums"> Albums</label>
+                    <label><input type="checkbox" name="userFilters[]" value="tracks"> Tracks</label>
+                </div>
+            </form>
         </div>
         <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
         https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
@@ -134,3 +172,4 @@
     </div>
 </body>
 </html>
+

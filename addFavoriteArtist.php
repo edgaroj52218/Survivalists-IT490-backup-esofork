@@ -168,7 +168,7 @@
                 </div>
 
                 <input type="submit" value="Submit" class="loginButton">
-                                                <a href="dashboard.php" class="href">Back to dashboard</a>
+                                                <a href="userProfile.php" class="href">Back to Profile</a>
 
             </form>
         </div>
