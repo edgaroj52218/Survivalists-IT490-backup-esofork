@@ -267,7 +267,7 @@
         <div class="content">
          <!--   <p>This is our dashboard. I made the box extra big so there's actually room for the stuff we're supposed to add. 
                Remember that we can change everything if you don't like it.</p> -->
-
+              <p></p>
             <form class="searchBar" id="searchForm">
                 <input type="text" name="userInput" class="searchInput" placeholder="Search for songs, albums..." required>
                 <button type="submit" class="searchButton">Find</button>
@@ -429,7 +429,7 @@ document.getElementById("searchForm").addEventListener("submit", function(e){
                         noOfVolume = "<b>No of Volumes: </b> " + item.no_of_volume + "<br>";
                         noOfItem = "<b>No of Items: </b>" + item.no_of_item + "<br>";
 }
-                       let encode = encodeURIComponent(JSON.stringify(item));
+                       let encoded = encodeURIComponent(JSON.stringify(item));
           // understandind the literals, helped me to build the card for the results
           // REF: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 			html += `
