@@ -34,24 +34,22 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
     <nav>
         <div class="nav-left">
-            <img src="../images/sample.png" alt="logo" class="logo">
+            <h3 class="logo">SocialTune</h3>
 
             <!-- will eventually adjust nav items accordingly for future deliverables AKA these are just placeholders for now -->
             <!-- will use fontawesome icons for navbars -->
 
             <ul>
-                <li><img src="images/notification.jpg" alt="notifications"></li>
-                <li><img src="images/inbox.png" alt="inbox"></li>
-                <li><img src="images/video.png" alt="video"></li>
+            <!-- updated links on nav bar -->
+                <li><a href="feed.php">Feed</a></li>
+                &nbsp;
+                &nbsp;
+                <li><a href="dashboardV2.php">Search Library</a></li>
             </ul>
         </div>
         <div class="nav-right">
-            <div class="search-box">
-                <img src="../images/search.png" alt="search icon">
-                <input type="text" placeholder="Search">
-            </div>
             <div class="nav-user-icon online">
-                <i class="fa-solid fa-circle-user"></i>
+                <a href="userProfile.php">Profile</a>
             </div>
         </div>
 
@@ -318,7 +316,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                 <!-- integrate kate's search bar here -->
                 <!-- created button class for styling -->
-                <a href="/DMZ/mediaSearch.php"><button class='createPost-btn'>+</button></a>
+                <a href="mediaSearch.php"><button class='createPost-btn'>+</button></a>
 
                 <?php
                 $userPosts = $user['posts'];
