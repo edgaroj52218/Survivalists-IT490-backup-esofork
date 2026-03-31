@@ -162,7 +162,7 @@
         </div>
 
         <div class="form">
-            <h2>Make a post</strong></h2>
+            <h2><strong>Make a post</strong></h2>
             
             <!-- just some test code to see if created posts are pushed to User's posts array and in postCollection -->
             <form method="post" action="createPostRequest.php">

@@ -144,6 +144,23 @@
         .signup:hover {
             color: #F92C85;
         }
+        /* https://www.geeksforgeeks.org/javascript/star-rating-using-html-css-and-javascript/ */
+        .star {
+            font-size: 10vh;
+            cursor: pointer;
+        }
+        .one {
+            color: rgb(255, 0, 0);
+        }
+        .three {
+            color: rgb(251, 255, 120);
+        }
+        .four {
+            color: rgb(255, 255, 0);
+        }
+        .five {
+            color: rgb(24, 159, 14);
+        }
         </style>
     </head>
     <body>
@@ -168,9 +185,16 @@
                                 </div>
                                 
                                 <div class="input">
-                                    <!-- // reference: https://www.w3schools.com/howto/howto_css_star_rating.asp -->
-                                    <span class="stars">Stars</span>
-                                    <input type="text" name="content" class="field-style" placeholder="Please type the content." required>
+                                    <!-- // reference: https://www.geeksforgeeks.org/javascript/star-rating-using-html-css-and-javascript/ -->
+                                    <span class="star-form">Stars</span>
+                                    <br>
+                                    <span onclick="gfg(1)" class="star">★</span>
+                                    <span onclick="gfg(2)" class="star">★</span>
+                                    <span onclick="gfg(3)" class="star">★</span>
+                                    <span onclick="gfg(4)" class="star">★</span>
+                                    <span onclick="gfg(5)" class="star">★</span>
+                                    <h3 id="output">Rating is: 0/5</h3>
+                                   <!-- <input type="text" name="content" class="field-style" placeholder="Please type the content." required> -->
                                 </div>
 
                                 <input type="submit" value="Submit" class="loginButton">
@@ -189,5 +213,33 @@
                 </form>
             </div>
         </div>
+    <script>
+       // to access the stars
+       let stars = 
+       document.getElementsbyClassName("star");
+       let output = 
+       document.getElementById("output"); 
+       // function to update rating
+       function gfg(rating) {
+        remove();
+        for (let i = 0; i< n; i++) {
+            if (rating == 1) cls = "one";
+            else if (rating == 2) cls = "two";
+            else if (rating == 3) cls = "three";
+            else if (rating == 4) cls = "four";
+            else if (rating == 5) cls = "five";
+            stars[i].className="star" + cls;
+            }
+        output.innerText = "Rating is: " + rating +"/5";
+    }
+    // to remove the pre-applied styling
+    function remove() {
+        let i = 0;
+        while (i < 5) {
+            stars[i].className = "star";
+            i++;
+        }
+    }
+    </script>
     </body>
 </html>
