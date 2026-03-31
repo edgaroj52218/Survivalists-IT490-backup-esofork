@@ -9,7 +9,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     header('Location: login.html');
     exit();
 } else {
-    $uri = "mongodb://100.105.160.23:27017/";
+    $uri = 'mongodb://100.127.86.26:27017/'; // change back to 'mongodb://100.105.160.23:27017/'; for real thing, it's set to my ip for testing purposes rn
 
     $client = new MongoDB\Client($uri);
     $database = $client->survivalists_db;
