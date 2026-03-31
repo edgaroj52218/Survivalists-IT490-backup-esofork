@@ -7,6 +7,8 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 require '../vendor/autoload.php';
 
+// change ip address to 100.105.160.23:27017 for real thing
+// change ip address to 127.0.0.1:27017 for testing on local machine (when other VMs are offline)
 $uri = 'mongodb://100.105.160.23:27017/';
 $mongoClient = new MongoDB\Client($uri);
 $database = $mongoClient->survivalists_db;
