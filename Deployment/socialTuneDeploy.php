@@ -3,10 +3,10 @@
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 
-require_once('path.inc');
-require_once('get_host_info.inc');
-require_once('rabbitMQLib.inc');
-require __DIR__.'vendor/autoload.php';
+require_once('../path.inc');
+require_once('../get_host_info.inc');
+require_once('../rabbitMQLib.inc');
+require_once('vendor/autoload.php');
 
 // Connection to the deployment mongo
 $uri = 'mongodb://100.97.21.49:27017/';
@@ -21,7 +21,7 @@ $version = "1.0";
 $status = "new";
 
 // in this part im gonna insert the info to the package
-$collection->updateOne(array("bundleName" => $bundleName, "version" => $version), array('$set' => array("status" => $st>
+$collection->updateOne(array("bundleName" => $bundleName, "version" => $version), array('$set' => array("status" => $status)), array("upsert" => true));
 
 
 
@@ -32,6 +32,6 @@ $request = array("type" => "install", "bundle" => $bundleName, "version" => $ver
 $response = $client->send_request($request);
 
 // printing the output
-print_r(array("message" => "Deployment triggered", "bundle" => $bundleName, "version" => $version, "status" => $status,>
+print_r(array("message" => "Deployment triggered", "bundle" => $bundleName, "version" => $version, "status" => $status,"response" => $response));
 
 ?>
