@@ -42,3 +42,28 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "=> we're reading the deploy.json..."
+
+# i used this reference to understand jq better: https://jqlang.org/manual/
+# this part will copy all the files -- note: -c means compact aand helps in this case so it doesnt break the loop -- note: -r will remove the quotes so the cp doesnt get confused
+jq -c '.copyFiles[]' deploy.json | while read item; do
+  SRC=$(echo $item | jq -r '.source')
+  DEST=$(echo $item | jq -r '.destination')
+
+  echo "=> we're copying $SRC to $DEST"
+  sudo cp -r $SRC/* $DEST
+done
+
+# this will run the commands
+jq -r '.commands[]' deploy.json | while read cmd; do
+  echo "=> we're running: $cmd"
+  # eval helps to run the command from the json
+  eval $cmd
+done
+
+# this will restart the services 
+jq -r '.services[]' deploy.json | while read service; do
+  echo "=> we're restarting: $service"
+  sudo systemctl restart $service
+done
+
+echo "=> congrats! The deployment was completed successfully!"
