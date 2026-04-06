@@ -7,15 +7,13 @@
 		exit();
 	}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Survivalists - Add to Favorites Page</title>
+    <head>
+        <meta charset="UTF-8">
+        <title>Survivalists - Write a Review!</title>
         <link rel="stylesheet" href="../user/style.css">
-
-       <style>
+        <style>
         /* I picked this font but we can change it later on */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
         
@@ -146,57 +144,102 @@
         .signup:hover {
             color: #F92C85;
         }
-    </style>
-</head>
-<body>
+        /* https://www.geeksforgeeks.org/javascript/star-rating-using-html-css-and-javascript/ */
+        .star {
+            font-size: 10vh;
+            cursor: pointer;
+        }
+        .one {
+            color: rgb(255, 0, 0);
+        }
+        .three {
+            color: rgb(251, 255, 120);
+        }
+        .four {
+            color: rgb(255, 255, 0);
+        }
+        .five {
+            color: rgb(24, 159, 14);
+        }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="image">
+                <div class="outerGlow"></div>
+                <div class="outerGlow" style="animation-delay: 1.5s;"></div>
+                <div class="profile">
+                    <img src="images/loginImage.jpg" alt="Profile Picture">
+                </div>
+            </div>
 
-    <div class="card">
-        <div class="image">
-            <div class="outerGlow"></div>
-            <!-- I left the animation delay in 1.5 because it looks more natural, and it fits the space -->
-            <div class="outerGlow" style="animation-delay: 1.5s;"></div>
-            
-            <div class="profile">
-                <img src="images/loginImage.jpg" alt="Profile Picture">
+            <div class="reviewform">
+                <h2><strong>Write a Review</strong></h2>
+                <form method="post" action="createReviewRequest.php">
+                    <div class="review-container">
+                        <div class="user-profile">
+                            <div>
+                                <div class="input">
+                                    <span class="labels">Media</span>
+                                    <input type="text" name="media" class="field-style" placeholder="Please type the song." required>
+                                </div>
+                                
+                                <div class="input">
+                                    <!-- // reference: https://www.geeksforgeeks.org/javascript/star-rating-using-html-css-and-javascript/ -->
+                                    <span class="star-form">Stars</span>
+                                    <br>
+                                    <span onclick="gfg(1)" class="star">★</span>
+                                    <span onclick="gfg(2)" class="star">★</span>
+                                    <span onclick="gfg(3)" class="star">★</span>
+                                    <span onclick="gfg(4)" class="star">★</span>
+                                    <span onclick="gfg(5)" class="star">★</span>
+                                    <h3 id="output">Rating is: 0/5</h3>
+                                   <!-- <input type="text" name="content" class="field-style" placeholder="Please type the content." required> -->
+                                </div>
+
+                                <input type="submit" value="Submit" class="loginButton">
+                                    <a href="dashboard2.php" class="href">Back to Dashboard</a>
+                            </div>
+                        </div>
+
+                        <div class="review-input-container">
+                            <textarea rows="3" placeholder="What are you listening to, RETRIEVE USERNAME FROM USER DATABASE?"></textarea>
+                            <!-- should be some sort of search text box that drops down and populates with related seach results -->
+                            <div class="add-post-links"> <!-- TODO: embed logic for playback functionality -->
+                                <a href="#"><img src="../images/video.png" alt="Video">Live Video</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-
-        <div class="form">
-            <h2><strong>Make a post</strong></h2>
-            
-            <!-- just some test code to see if created posts are pushed to User's posts array and in postCollection -->
-            <form method="post" action="createPostRequest.php">
-                <div class="write-post-container">
-                    <div class="user-profile">
-                        <div>
-                          <div class="input">
-                    <span class="labels">Media</span>
-                    <input type="text" name="media" class="field-style" placeholder="For now: Please type the song." required>
-                </div>
-
-                <div class="input">
-                    <span class="labels">Content</span>
-                    <input type="text" name="content" class="field-style" placeholder="Please type the content." required>
-                </div>
-
-                <input type="submit" value="Submit" class="loginButton">
-                                                <a href="dashboard.php" class="href">Back to dashboard</a>         
-                        </div>
-                    </div>
-
-                    <div class="post-input-container">
-                        <textarea rows="3" placeholder="What are you listening to, RETRIEVE USERNAME FROM USER DATABASE?"></textarea>
-                        
-                        <!-- should be some sort of search text box that drops down and populates with related seach results -->
-                        
-                        <div class="add-post-links"> <!-- figure out the embed logic for playback -->
-                            <a href="#"><img src="../images/video.png" alt="video">Live Video</a> 
-                        </div>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-</body>
+    <script>
+       // to access the stars
+       let stars = 
+       document.getElementsbyClassName("star");
+       let output = 
+       document.getElementById("output"); 
+       // function to update rating
+       function gfg(rating) {
+        remove();
+        for (let i = 0; i< n; i++) {
+            if (rating == 1) cls = "one";
+            else if (rating == 2) cls = "two";
+            else if (rating == 3) cls = "three";
+            else if (rating == 4) cls = "four";
+            else if (rating == 5) cls = "five";
+            stars[i].className="star" + cls;
+            }
+        output.innerText = "Rating is: " + rating +"/5";
+    }
+    // to remove the pre-applied styling
+    function remove() {
+        let i = 0;
+        while (i < 5) {
+            stars[i].className = "star";
+            i++;
+        }
+    }
+    </script>
+    </body>
 </html>
