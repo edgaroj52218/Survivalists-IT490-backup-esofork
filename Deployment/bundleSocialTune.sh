@@ -43,3 +43,24 @@ cat <<EOF > $buildDir/deploy.json
   "services": ["apache2"]
 }
 EOF
+
+# this will compress everything into the tar.gz 
+echo "=> we're creating the bundle..."
+tar -czf /tmp/$bundleFile -C $buildDir .
+
+# here if the last commnad wasnt successful, im printing an error and it will quit
+# i used this reference to understand the bash variables: https://tecadmin.net/bash-special-variables/
+if [ $? -ne 0 ]; then
+  echo "=> sorry! the bundle creation failed"
+  exit 1
+fi
+
+echo "=> we're sending the bundle..."
+scp /tmp/$bundleFile $deployUser@$deployHost:$deployPath/
+
+if [ $? -ne 0 ]; then
+  echo "Sorry! The SCP failed"
+  exit 1
+fi
+
+echo "=> congrats! The bundle was sent successfully: $bundleFile"
