@@ -8,6 +8,15 @@ require_once('../get_host_info.inc');
 require_once('../rabbitMQLib.inc');
 require_once('vendor/autoload.php');
 
+// this allows me to frab the args  (bundle name, version, and env)
+$bundle = $argv[1];
+$version = $argv[2];
+$env = strtoupper($argv[3]);
+
+
+// trying to do failed and passed
+$status = $argv[4] ?? "new";
+
 // Connection to the deployment mongo
 $uri = 'mongodb://100.97.21.49:27017/';
 $mongoClient = new MongoDB\Client($uri);
@@ -15,23 +24,19 @@ $mongoClient = new MongoDB\Client($uri);
 $database = $mongoClient->SocialTuneDeployment;
 $collection = $database->packages;
 
-// info for the package
-$bundleName = "socialtune";
-$version = "1.0";
-$status = "new";
+// this allows me to insert the new arriving version to db 
+if ($status == "new") {
+   $collection->insertOne(["bundle"=>$bundle, "version"=>$version, "status"=>"new", "env"=>$env, "timestamp"=>time()]);
+} else {
+   $collection->insertOne(["bundle"=>$bundle, "version"=>$version, "status"=>$status, "env"=>$env, "timestamp"=>time()]);
+}
 
-// in this part im gonna insert the info to the package
-$collection->updateOne(array("bundleName" => $bundleName, "version" => $version), array('$set' => array("status" => $status)), array("upsert" => true));
+client = new rabbitMQClient("testRabbitMQ.ini","deploymentServer");
 
-
-
-$client = new rabbitMQClient("testRabbitMQ.ini", "testDeployment");
-
-$request = array("type" => "install", "bundle" => $bundleName, "version" => $version, "environment" => "QA");
+$request = ["type"=>"install","bundle"=>$bundle,"version"=>$version,"environment"=>$env];
 
 $response = $client->send_request($request);
 
-// printing the output
-print_r(array("message" => "Deployment triggered", "bundle" => $bundleName, "version" => $version, "status" => $status,"response" => $response));
+echo "Deployment triggered\n";
 
 ?>
