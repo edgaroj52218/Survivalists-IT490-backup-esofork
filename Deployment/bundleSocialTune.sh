@@ -49,6 +49,8 @@ EOF
 echo "=> we're creating the bundle..."
 tar -czf /tmp/$BUNDLE -C $BUILD .
 
+scp /tmp/$BUNDLE $USER@$HOST:$PATH_REMOTE/
+
 # here if the last commnad wasnt successful, im printing an error and it will quit
 # i used this reference to understand the bash variables: https://tecadmin.net/bash-special-variables/
 if [ $? -ne 0 ]; then
