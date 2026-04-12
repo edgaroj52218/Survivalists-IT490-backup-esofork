@@ -4,13 +4,21 @@
 # i used this website for the bash test operators: https://linuxhandbook.com/bash-test-operators/
 
 # this will help me to check the version
-if [ -z "$1" ]; then
-  echo "provide bundle name, example: ./bundleSocialTune.sh <version>"
-  exit 1
-fi
+#if [ -z "$1" ]; then
+#  echo "provide bundle name, example: ./bundleSocialTune.sh <version>"
+#  exit 1
+#fi
 
-VERSION=$1
-ENV=${2:-"QA"}
+#VERSION=$1
+#ENV=${2:-"QA"}
+
+# handling the race condition 
+ENV="DEPLOYMENT"
+echo "=> we're gettting the next version..."
+
+VERSION=$(ssh katerinegomez@100.97.21.49 "php /home/katerinegomez/deployment/incrementBundle.php")
+
+echo "=> the version for this bundle is: $VERSION"
 
 BUNDLE="socialtune_v${VERSION}.tar.gz"
 SRC="$HOME/git/db_survivalists/Survivalists-IT490"
