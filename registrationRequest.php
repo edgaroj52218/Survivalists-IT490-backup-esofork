@@ -11,7 +11,7 @@ if (!isset($_POST['username']) || !isset($_POST['password'])) {
 $userInput = $_POST['username'];
 $passwordInput = $_POST['password'];
 
-$client = new rabbitMQClient("testRabbitMQ.ini", "testServer");
+$client = new rabbitMQClient("testRabbitMQ.ini", "testdev");
 
 //this will show up on the queue
 $registration = array(
@@ -33,3 +33,4 @@ echo "</pre>";
 <a href="login.html">Go back to the login page.</a>
 </body>
 </html>
+

@@ -5,7 +5,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     header('Location: login.html');
     exit();
 } else {
-    $uri = "mongodb://100.111.247.121:27017/";
+    $uri = "mongodb://100.77.143.54:27017/";
 
     $client = new MongoDB\Client($uri);
     $database = $client->survivalists_db;

@@ -11,7 +11,7 @@ require_once(__DIR__.'/get_host_info.inc');
 
 require_once(__DIR__.'/rabbitMQLib.inc');
 
-$client = new rabbitMQClient("testRabbitMQ.ini","testDMZ");
+$client = new rabbitMQClient("testRabbitMQ.ini","devDMZ");
 
 $input = json_decode(file_get_contents("php://input"), true);
 

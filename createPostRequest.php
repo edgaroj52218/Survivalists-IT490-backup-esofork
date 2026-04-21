@@ -30,7 +30,7 @@ if (!isset($input['media']) || !isset($input['content'])) {
 }
 
 
-$client = new rabbitMQClient("testRabbitMQ.ini", "testServer");
+$client = new rabbitMQClient("testRabbitMQ.ini", "testdev");
 
 
 // media arrives as an array (decoded from JSON object); re-encode it as a JSON

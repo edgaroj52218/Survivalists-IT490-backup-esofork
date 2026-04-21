@@ -5,9 +5,9 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE);
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
-require '../vendor/autoload.php';
+require 'vendor/autoload.php';
 
-$uri = 'mongodb://100.111.247.121:27017/';
+$uri = 'mongodb://100.77.143.54:27017/';
 $mongoClient = new MongoDB\Client($uri);
 $database = $mongoClient->survivalists_db;
 
@@ -393,7 +393,7 @@ function requestProcessor($request) {
     return array("returnCode" => '0', "message" => "Server received request and processed");
 }
 
-$server = new rabbitMQServer("testRabbitMQ.ini", "testServer");
+$server = new rabbitMQServer("testRabbitMQ.ini", "testdev");
 
 echo "testRabbitMQServer BEGIN".PHP_EOL;
 $server->process_requests('requestProcessor');

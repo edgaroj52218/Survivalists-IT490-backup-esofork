@@ -6,7 +6,7 @@
 
 	// $username = $_POST['username'];
 
-	$client = new rabbitMQClient("testRabbitMQ.ini", "testServer");
+	$client = new rabbitMQClient("testRabbitMQ.ini", "testdev");
 
 	$addFavoriteAlbumRequest = [
 		'type' => 'addFavoriteAlbum',
