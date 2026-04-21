@@ -166,14 +166,14 @@
             <div class="profileUser">
                 <!-- i got the image from here: https://unsplash.com/photos/collection-of-various-music-album-covers-998pvuxqK6Y -->
                 <img src="images/dashboardImage.jpg" alt="User">
-                <h1>Welcome back, Survivalist!</h1>
+                <h1>Welcome back to SocialTune!</h1>
             </div>
             <span class="status">SESSION ACTIVE</span>
         </div>
         <div class="content">
-            <p>This is our dashboard. I made the box extra big so there's actually room for the stuff we're supposed to add. 
-               Remember that we can change everything if you don't like it.</p>
-
+          <!--  <p>This is our dashboard. I made the box extra big so there's actually room for the stuff we're supposed to add. 
+               Remember that we can change everything if you don't like it.</p>-->
+             <p></p>
             <form class="searchBar" id="searchForm">
                 <input type="text" name="userInput" class="searchInput" placeholder="Search for songs, albums..." required>
                 <button type="submit" class="searchButton">Find</button>
@@ -189,7 +189,7 @@
         </div>
         <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
         https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
-        <a href="home.html" class="logoutButton">Log out &rarr;</a>
+        <a href="userProfile.php" class="logoutButton">Go Back to Profile &rarr;</a>
     </div>
 </body>
 </html>

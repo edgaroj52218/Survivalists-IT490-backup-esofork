@@ -1,15 +1,22 @@
+<?php
+    // session authentication
+	if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
+		header('Location: login.html');
+		exit();
+	}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SocialTune - Register</title>
+    <title>Survivalists - Add to Favorites Page</title>
     
     <style>
         /* I picked this font but we can change it later on */
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
         
+        /* I picked this color because I thought it looked cool, but we can change it. */
         body {
-            /* I picked this color because I thought it looked cool, but we can change it. */
             background-color: #FDF5DF; 
             font-family: 'Playfair Display', serif;
             display: flex;
@@ -29,19 +36,21 @@
             align-items: center;
             gap: 60px;
         }
+
         /* This is going to be on the left side where the image and rings will be */
         .image {
             position: relative;
-            width: 200px;
-            height: 200px;
+            width: 300px; /* i added more space because the picture was super small */
+            height: 300px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
+
         /* Here Im gonna put an image with the circle shape */
         .profile {
-            width: 140px;
-            height: 140px;
+            width: 240px; /* i incremented the size of the image */
+            height: 240px;
             border-radius: 50%;
             overflow: hidden; /* this will help me to keep the image as a circle */
             z-index: 5;
@@ -65,6 +74,7 @@
             border-radius: 50%;
             animation: ring-pulse 3.5s linear infinite;
         }
+
         /* this basically makes the circles actually move... it starts very small and solid then grows and fades out. I used this as a reference:
             https://www.w3schools.com/cssref/atrule_keyframes.php
         */
@@ -73,6 +83,7 @@
             100% { transform: scale(1.3); opacity: 0; }
         }
 
+        /* This is for the right side */
         .form {
             display: flex;
             flex-direction: column;
@@ -81,7 +92,7 @@
         .form h2 {
             font-weight: normal;
             margin-bottom: 25px;
-            font-size: 29px;
+            font-size: 26px;
         }
 
         .input {
@@ -104,7 +115,7 @@
             font-size: 12px;
         }
 
-        .registerButton {
+        .loginButton {
             width: 100%;
             padding: 12px;
             background: #1a1a1a;
@@ -116,8 +127,20 @@
             transition: 0.2s;
         }
 
-        .registerButton:hover {
+        .loginButton:hover {
             background: #F92C85;
+        }
+
+        .signup {
+            text-decoration: none;
+            font-size: 14px;
+            color: #1a1a1a;
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .signup:hover {
+            color: #F92C85;
         }
     </style>
 </head>
@@ -130,25 +153,23 @@
             <div class="outerGlow" style="animation-delay: 1.5s;"></div>
             
             <div class="profile">
-                <img src="images/registrationImage.jpg" alt="Profile Picture">
+                <img src="images/loginImage.jpg" alt="Profile Picture">
             </div>
         </div>
 
         <div class="form">
-            <h2>Join <strong>SOCIALTUNE</strong></h2>
+            <h2>Add to your favorites</strong></h2>
             
-            <form method="post" action="registrationRequest.php">
+            <form method="post" action="addFavoriteArtistRequest.php">
+
                 <div class="input">
-                    <span class="labels">New Username</span>
-                    <input type="text" name="username" class="field-style" placeholder="Please type your new username" required>
+                    <span class="labels">Artist</span>
+                    <input type="text" name="artist" class="field-style" placeholder="Please type the artist." required>
                 </div>
 
-                <div class="input-box">
-                    <span class="labels">New Password</span>
-                    <input type="password" name="password" class="field-style" placeholder="Please type your new password" required>
-                </div>
+                <input type="submit" value="Submit" class="loginButton">
+                                                <a href="userProfile.php" class="href">Back to Profile</a>
 
-                <input type="submit" value="Register" class="registerButton">
             </form>
         </div>
     </div>
