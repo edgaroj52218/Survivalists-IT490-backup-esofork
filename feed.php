@@ -32,134 +32,288 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     <title>View Friend Profile | SocialTune</title>
     <link rel="stylesheet" href="/user/style.css">
     <script src="https://kit.fontawesome.com/95d0fccd5e.js" crossorigin="anonymous"></script>
+
+    <style>
+/* ill move this to the style later on */
+
+.commentBox { 
+	 margin-top: 12px; 
+}
+
+.commentRow {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.commentInput {
+    padding: 6px 10px;
+    width: 70%;
+    border: 1px solid #ddd;
+}
+
+.commentBtn {
+    padding: 6px 12px;
+    background: #FF4D6D;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.showCommentsBtn {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.commentList {
+    display: none;
+    margin-top: 10px;
+}
+
+.singleComment {
+    padding: 6px;
+    border-left: 2px solid #ddd;
+    margin-bottom: 5px;
+}
+
+.userName { 
+    font-weight: bold; 
+}
+.time { 
+	font-size: 11px; 
+	color: gray;
+}
+.text { 
+	font-size: 14px; 
+}
+    </style>
 </head>
 
 <body>
- 
-<!-- brought over the updated nav bar from userProfile -->
 
-    <nav>
-        <div class="nav-left">
-            <h3 class="logo">SocialTune</h3>
+<nav>
+    <div class="nav-left">
+        <h3 class="logo">SocialTune</h3>
 
-            <!-- will eventually adjust nav items accordingly for future deliverables AKA these are just placeholders f>
-            <!-- will use fontawesome icons for navbars -->
+        <!-- will eventually adjust nav items accordingly for future deliverables AKA these are just placeholders -->
+        <!-- will use fontawesome icons for navbars -->
 
-            <ul>
+        <ul>
             <!-- updated links on nav bar -->
-                <li><a href="feed.php">Feed</a></li>
-                &nbsp;
-                &nbsp;
-                <li><a href="dashboard2.php">Search Library</a></li>
-            </ul>
-        </div>
-        <div class="nav-right">
-            <div class="nav-user-icon online">
-                <a href="userProfile.php">Profile</a>
-            </div>
-        </div>
-
-    </nav>
-
-
-    <!-- profile page -->
-    <div class="profile-container">
-        <?php
-        // need to access each of the users in the logged in user's following array
-        $followingList = $user['following'] ?? [];
-
-        // for each user in the following array
-        foreach ($followingList as $userFollowed) {
-
-            // get the current user's posts array that the pointer is pointing at during iterating round
-            // following feed in this case will not include the logged in user's personal posts
-            //$userPosts = $userFollowed['posts'];
-
-            $followedUser = $userCollection->findOne(['username' => $userFollowed]);
-            $userPosts = $followedUser['posts'];
-
-            foreach ($userPosts as $postsMadeByUserFollowed) {
-                echo "<div class='post-container'>";
-                echo "<div class='post-row'>";
-                echo "<div class='user-profile'>";
-                echo "<i class='fa-solid fa-circle-user'>";
-                echo "</i>";
-                // <!-- will modify to user icons instead of images -->
-                echo "<div>";
-                // <!-- <p>RETRIEVE USERNAME FROM POST DATABASE</p> -->
-
-                echo "<p>";
-
-
-		// KATE -- like and comment section
-		$post = (array)$postsMadeByUserFollowed;
-
-                // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
-                $posterUsername = $postsMadeByUserFollowed->username;
-                $media = $postsMadeByUserFollowed->media;
-                $content = $postsMadeByUserFollowed->content;
-                $postedAt = $postsMadeByUserFollowed->postedAt;
-
-
-		// KATE -- like and comment section
-		$postId = (string)$post['_id'];
-                $currentUser = $user['username'];
-
-                $likes = isset($post['likes']) ? (array)$post['likes'] : [];
-                $isLiked = in_array($currentUser, $likes);
-                $likeCount = count($likes);
-
-                $comments = isset($post['comments']) ? (array)$post['comments'] : [];
-
-
-
-                echo $posterUsername;
-
-                echo "</p>";
-
-                echo "<span>";
-
-                echo $postedAt;
-
-                echo "</span>";
-
-                // RETRIEVE DATE OBJECT FROM LOGGED IN USER'S POSTS ARRAY BY ITERATING W/ FOREACH LOOP
-
-
-                echo "<p class='post-text'>";
-                echo $media;
-                echo "<hr/ style='margin-top: 10px;'>".$content;
-                echo "</p>";
-
-                echo "</div>";
-                echo "</div>";
-                echo "<a href='#'>";
-                echo "<i class='fas fa-ellipsis-v'></i></a>";
-                echo "</div>";
-
-                // <!-- <p class="post-text">RETRIEVE USERNAME FROM POST DATABASE</p> -->
-
-                // <div class="post-row">
-                //     <div class="activity-icons">
-                //         <div><img src="../images/like.png" alt="like"> RETRIEVE COUNTER OBJECT FROM POST DATABASE
-                //         </div>
-                //         <div><img src="../images/comments.png" alt="comments"> RETRIEVE COUNTER OBJECT FROM POST
-                //             DATABASE</div>
-                //         <div><img src="../images/share.png" alt="shares"> RETRIEVE COUNTER OBJECT FROM POST DATABASE
-                //         </div>
-
-                //     </div>
-                // </div>
-                echo "</div>";
-            };
-        };
-        ?>
+            <li><a href="feed.php">Feed</a></li>
+            &nbsp;
+            &nbsp;
+            <li><a href="dashboard2.php">Search Library</a></li>
+        </ul>
     </div>
 
-    <div class="footer">
-        <p>&copy SocialTune, Inc. All rights reserved.</p>
+    <div class="nav-right">
+        <div class="nav-user-icon online">
+            <a href="userProfile.php">Profile</a>
+        </div>
     </div>
+</nav>
+
+<!-- profile page -->
+<div class="profile-container">
+
+<?php
+// need to access each of the users in the logged in user's following array
+$followingList = $user['following'] ?? [];
+
+// for each user in the following array
+foreach ($followingList as $userFollowed) {
+
+    // get the current user's posts array that the pointer is pointing at during iterating round
+    // following feed in this case will not include the logged in user's personal posts
+
+    $followedUser = $userCollection->findOne(['username' => $userFollowed]);
+    $userPosts = $followedUser['posts'];
+
+    foreach ($userPosts as $postsMadeByUserFollowed) {
+
+        echo "<div class='post-container'>";
+        echo "<div class='post-row'>";
+        echo "<div class='user-profile'>";
+        echo "<i class='fa-solid fa-circle-user'></i>";
+        echo "<div>";
+
+        echo "<p>";
+
+        // KATE -- like and comment section
+        $post = (array)$postsMadeByUserFollowed;
+
+        $posterUsername = $postsMadeByUserFollowed->username;
+        $media = $postsMadeByUserFollowed->media;
+        $content = $postsMadeByUserFollowed->content;
+        $postedAt = $postsMadeByUserFollowed->postedAt;
+
+        $postId = (string)$post['_id'];
+        $currentUser = $user['username'];
+
+        $likes = isset($post['likes']) ? (array)$post['likes'] : [];
+        $isLiked = in_array($currentUser, $likes);
+        $likeCount = count($likes);
+
+        $comments = isset($post['comments']) ? (array)$post['comments'] : [];
+
+        echo $posterUsername;
+        echo "</p>";
+
+        echo "<span>";
+        echo $postedAt;
+        echo "</span>";
+
+        echo "<p class='post-text'>";
+        echo $media;
+        echo "<hr style='margin-top:10px;'>" . $content;
+        echo "</p>";
+
+        echo "</div>";
+        echo "</div>";
+
+        echo "<a href='#'><i class='fas fa-ellipsis-v'></i></a>";
+        echo "</div>";
+
+        // like button
+        echo "<div style='display:flex; align-items:center; gap:8px; margin-top:8px;'>";
+	    // i used this the font awesome icons for the like button. reference: https://fontawesome.com/icons/heart
+		// for the onclick function to manage the  like and unlike interaction i used this reference: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onclick
+        echo "<i 
+        class='" . ($isLiked ? "fa-solid" : "fa-regular") . " fa-heart'
+        id='likeIcon_$postId'
+        style='cursor:pointer; color:" . ($isLiked ? "red" : "gray") . "; font-size:20px;'
+        onclick=\"likePost('$postId','$posterUsername')\">
+        </i>";
+
+        echo "<span id='likeCount_$postId'>$likeCount</span>";
+        echo "</div>";
+
+        // comment section
+        echo "<div class='commentBox'>";
+
+        echo "<div class='commentRow'>";
+        echo "<input type='text' class='commentInput' id='commentInput_$postId' placeholder='Leave a comment...'>";
+        echo "<button class='commentBtn' onclick=\"addComment('$postId','$posterUsername')\">Post</button>";
+        echo "</div>";
+
+        echo "<button class='showCommentsBtn' onclick=\"toggleComments('$postId')\">";
+        echo "View comments (" . count($comments) . ")";
+        echo "</button>";
+
+        echo "<div id='commentsBox_$postId' class='commentList'>";
+
+        foreach ($comments as $c) {
+			 // in this part each comment is treated as an array so i can grab values like username and text
+            $c = (array)$c;
+
+            echo "<div class='singleComment'>";
+            echo "<span class='userName'>" . $c['username'] . "</span>"; // this shows who wrote te comment
+				// here i manage the timestamp so we see when it was posted
+            echo "<span class='time'> - " . date("H:i", $c['createdAt']) . "</span>";
+            echo "<div class='text'>" . $c['comment'] . "</div>";
+            echo "</div>";
+        }
+
+        echo "</div>";
+        echo "</div>";
+
+        echo "</div>";
+    }
+}
+?>
+
+</div>
+
+<div class="footer">
+    <p>&copy SocialTune, Inc. All rights reserved.</p>
+</div>
 
 </body>
-
 </html>
+
+<script>
+function likePost(postId, owner) {
+
+    fetch('likePost.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `post_id=${postId}&post_owner=${owner}`
+    })
+    .then(res => res.text())
+    .then(res => {
+
+        let icon = document.getElementById('likeIcon_' + postId);
+        let countEl = document.getElementById('likeCount_' + postId);
+
+           // for the parseInt i used this reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+        let count = parseInt(countEl.innerText) || 0;
+        // this part will change the icon and it will also update the count of the likes
+        if (res === "liked") {
+            icon.classList.remove("fa-regular");
+            icon.classList.add("fa-solid");
+            icon.style.color = "red";
+            count++;
+        } else if (res === "unliked") {
+            icon.classList.remove("fa-solid");
+            icon.classList.add("fa-regular");
+            icon.style.color = "gray";
+            count--;
+        }
+
+        countEl.innerText = count;
+    });
+}
+
+function addComment(postId, owner) {
+     // in this part we grab what the person typed
+    let commentInput = document.getElementById('commentInput_' + postId);
+    let commentText = commentInput.value.trim();
+
+    if (!commentText) return;
+
+    fetch('commentPost.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `post_id=${postId}&post_owner=${owner}&comment=${encodeURIComponent(commentText)}`
+    })
+    .then(response => response.text())
+    .then(result => {
+
+        if (result === "notAllowed") {
+            alert("You must follow each other to comment.");
+            return;
+        }
+
+        if (result === "commentAdded") {
+
+            let commentsBox = document.getElementById('commentsBox_' + postId);
+			 //here we just create a new comment element and it will be added to the page
+            let newComment = document.createElement("div");
+            newComment.innerHTML = "<strong>You:</strong> " + commentText;
+              // i used this ref for the appenchild: https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
+            commentsBox.appendChild(newComment);
+
+            commentInput.value = "";
+        }
+    });
+}
+
+// in this part i dont want the comments to accumulate so this part will show or hide them
+function toggleComments(postId) {
+    let box = document.getElementById('commentsBox_' + postId);
+    if (box.style.display === "none" || box.style.display === "") {
+        box.style.display = "block";
+    } else {
+        box.style.display = "none";
+    }
+}
+</script>
