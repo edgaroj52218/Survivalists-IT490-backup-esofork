@@ -9,7 +9,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     header('Location: login.html');
     exit();
 } else {
-    $uri = "mongodb://100.105.160.23:27017/";
+    $uri = "mongodb://100.120.179.21:27017/";
 
     $client = new MongoDB\Client($uri);
     $database = $client->survivalists_db;
@@ -90,11 +90,28 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                 echo "<p>";
 
+
+		// KATE -- like and comment section
+		$post = (array)$postsMadeByUserFollowed;
+
                 // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
                 $posterUsername = $postsMadeByUserFollowed->username;
                 $media = $postsMadeByUserFollowed->media;
                 $content = $postsMadeByUserFollowed->content;
                 $postedAt = $postsMadeByUserFollowed->postedAt;
+
+
+		// KATE -- like and comment section
+		$postId = (string)$post['_id'];
+                $currentUser = $user['username'];
+
+                $likes = isset($post['likes']) ? (array)$post['likes'] : [];
+                $isLiked = in_array($currentUser, $likes);
+                $likeCount = count($likes);
+
+                $comments = isset($post['comments']) ? (array)$post['comments'] : [];
+
+
 
                 echo $posterUsername;
 
