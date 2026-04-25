@@ -37,27 +37,33 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 /* ill move this to the style later on */
 
 .commentBox { 
-	 margin-top: 12px; 
+     margin-top: 12px; 
 }
 
 .commentRow {
     display: flex;
     gap: 8px;
     margin-top: 8px;
+    width: 100%;
 }
 
 .commentInput {
-    padding: 6px 10px;
-    width: 70%;
+    padding: 12px 15px;
     border: 1px solid #ddd;
+    flex: 1;
+    border-radius: 6px;
+    font-size: 13px;
+    min-width: 0;
 }
 
 .commentBtn {
-    padding: 6px 12px;
+    padding: 11px 12px;
     background: #FF4D6D;
     color: white;
     border: none;
     cursor: pointer;
+    font-weight: bold; 
+    border-radius: 6px;
 }
 
 .showCommentsBtn {
@@ -66,7 +72,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     color: #555;
     font-size: 13px;
     cursor: pointer;
-    margin-top: 8px;
+    margin-top: 11px;
 }
 
 .commentList {
@@ -77,10 +83,13 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 .singleComment {
     padding: 10px;
     border-radius: 4px;
-    border-left: 2px solid #FF4D6D;
+    border-left: 3px solid #00A8A8;
     margin-bottom: 5px;
-    background-color: #F2F2F2;
+    background-color: #F9F9F9;
     color: black;
+     width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
 }
 
 .userName { 
@@ -182,9 +191,8 @@ foreach ($followingList as $userFollowed) {
 
         echo "<p class='post-text'>";
         echo $displayMedia;
-        echo "<hr style='margin-top:10px; width:330px; margin-left:0; border:none; border-top:1px solid black;'>" . $content;
+        echo "<hr style='margin-top:10px; margin-bottom: 8px;  width:100%; margin-left:0; border:none; border-top:1px solid black;'>" . $content;
         echo "</p>";
-
         echo "</div>";
         echo "</div>";
 
@@ -192,7 +200,7 @@ foreach ($followingList as $userFollowed) {
         echo "</div>";
 
         // like button
-        echo "<div style='display:flex; align-items:center; gap:8px; margin-top:8px;'>";
+        echo "<div style='display:flex; align-items:center; gap:8px; margin-top:15px;'>";
 	    // i used this the font awesome icons for the like button. reference: https://fontawesome.com/icons/heart
 		// for the onclick function to manage the  like and unlike interaction i used this reference: https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/onclick
         echo "<i 
@@ -225,7 +233,7 @@ foreach ($followingList as $userFollowed) {
 
             echo "<div class='singleComment'>";
             echo "<span class='userName'>" . $c['username'] . "</span>"; // this shows who wrote te comment
-				// here i manage the timestamp so we see when it was posted
+	     // here i manage the timestamp so we see when it was posted
             echo "<span class='time'> - " . date("H:i", $c['createdAt']) . "</span>";
             echo "<div class='text'>" . $c['comment'] . "</div>";
             echo "</div>";
