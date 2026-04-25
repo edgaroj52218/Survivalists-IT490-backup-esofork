@@ -75,9 +75,12 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 }
 
 .singleComment {
-    padding: 6px;
-    border-left: 2px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    border-left: 2px solid #FF4D6D;
     margin-bottom: 5px;
+    background-color: #F2F2F2;
+    color: black;
 }
 
 .userName { 
@@ -168,9 +171,18 @@ foreach ($followingList as $userFollowed) {
         echo $postedAt;
         echo "</span>";
 
+	 $mediaData = json_decode($media, true);
+             if (isset($mediaData['name'])) {
+                $displayMedia = $mediaData['id'] . " | " . $mediaData['name'] . " | " . $mediaData['type'];
+             } elseif (isset($mediaData['title'])) {
+                 $displayMedia = $mediaData['id'] . " | " . $mediaData['title'] . " | " . $mediaData['type'];
+             } else {
+                 $displayMedia = $media;
+              }
+
         echo "<p class='post-text'>";
-        echo $media;
-        echo "<hr style='margin-top:10px;'>" . $content;
+        echo $displayMedia;
+        echo "<hr style='margin-top:10px; width:330px; margin-left:0; border:none; border-top:1px solid black;'>" . $content;
         echo "</p>";
 
         echo "</div>";
