@@ -262,7 +262,6 @@
                 <img src="images/dashboardImage.jpg" alt="User">
                 <h1>Welcome back to SocialTune!</h1>
             </div>
-            
         </div>
         <div class="content">
          <!--   <p>This is our dashboard. I made the box extra big so there's actually room for the stuff we're supposed to add. 
