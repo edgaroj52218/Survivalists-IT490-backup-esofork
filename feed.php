@@ -16,7 +16,40 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     $userCollection = $database->reg_users;
 
     $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
+
+    $allUsers = $userCollection->find();
+    //paste here
+    foreach ($allUsers as $users) {
+
+    if (!isset($users['posts'])) continue;
+
+    $updatedPosts = [];
+
+    foreach ($users['posts'] as $post) {
+
+        // here we nneed to make sure the object id actually exists on mongo
+        if (!isset($post['_id'])) {
+	    // in this part we do like a new mongo id (unique)for the post
+            $post['_id'] = new MongoDB\BSON\ObjectId();
+        }
+        // this if is to make sure that the array for likes exist
+        if (!isset($post['likes'])) {
+            $post['likes'] = [];
+        }
+
+        if (!isset($post['comments'])) {
+            $post['comments'] = [];
+         }
+
+        $updatedPosts[] = $post;
+    }
+
+    // this updates  the posts from the user in mongo
+    $userCollection->updateOne(
+        ['_id' => $users['_id']],['$set' => ['posts' => $updatedPosts]]);
+    }
 }
+
 ?>
 
 <!-- video ref used for basic page template: https://www.youtube.com/watch?v=NljIHlZRTTE (PT 1) -->
@@ -148,6 +181,16 @@ foreach ($followingList as $userFollowed) {
 
     foreach ($userPosts as $postsMadeByUserFollowed) {
 
+// trying public and private  --- THIS PART WORKS
+	$post = (array)$postsMadeByUserFollowed;
+        $postStatus = isset($post['postStatus']) ? $post['postStatus'] : 'public'; 
+            if ($postStatus === 'private' && $followedUser['username'] !== $user['username']) {
+                continue;
+             }
+
+
+
+
         echo "<div class='post-container'>";
         echo "<div class='post-row'>";
         echo "<div class='user-profile'>";
@@ -164,7 +207,7 @@ foreach ($followingList as $userFollowed) {
         $content = $postsMadeByUserFollowed->content;
         $postedAt = $postsMadeByUserFollowed->postedAt;
 
-        $postId = (string)$post['_id'];
+        $postId = isset($post['_id']) ? (string)$post['_id'] : uniqid(); // ADDED THIS KATEEEEE PUBLIC
         $currentUser = $user['username'];
 
         $likes = isset($post['likes']) ? (array)$post['likes'] : [];
@@ -173,7 +216,7 @@ foreach ($followingList as $userFollowed) {
 
         $comments = isset($post['comments']) ? (array)$post['comments'] : [];
 
-        echo $posterUsername;
+        echo "<a href='userProfileBio.php?username=".$posterUsername."'>".$posterUsername."</a>";
         echo "</p>";
 
         echo "<span>";
@@ -233,8 +276,8 @@ foreach ($followingList as $userFollowed) {
 
             echo "<div class='singleComment'>";
             echo "<span class='userName'>" . $c['username'] . "</span>"; // this shows who wrote te comment
-	     // here i manage the timestamp so we see when it was posted
-            echo "<span class='time'> - " . date("H:i", $c['createdAt']) . "</span>";
+	     // here i manage the timestamp so we see when it was posted. i added gm to date so time display in UTC which matches how time() saves it
+            echo "<span class='time'> - " . gmdate("H:i", $c['createdAt']) . "</span>";
             echo "<div class='text'>" . $c['comment'] . "</div>";
             echo "</div>";
         }
@@ -257,6 +300,8 @@ foreach ($followingList as $userFollowed) {
 </html>
 
 <script>
+
+let loggedInUser = "<?php echo $user['username']; ?>";
 function likePost(postId, owner) {
 
     fetch('likePost.php', {
@@ -316,9 +361,15 @@ function addComment(postId, owner) {
         if (result === "commentAdded") {
 
             let commentsBox = document.getElementById('commentsBox_' + postId);
-			 //here we just create a new comment element and it will be added to the page
+            commentsBox.style.display = "block";
+	    // since im not getting the time as soon as i post, im gonna get the current date. For padStart i used this reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
+	    let now = new Date();
+             // i added UTC so it matches the gmdate
+             let time = now.getUTCHours().toString().padStart(2,'0') + ":" + now.getUTCMinutes().toString().padStart(2,'0'); 
+	      //here we just create a new comment element and it will be added to the page
             let newComment = document.createElement("div");
-            newComment.innerHTML = "<strong>You:</strong> " + commentText;
+	    newComment.className = "singleComment";
+            newComment.innerHTML = "<span class='userName'>" + loggedInUser + "</span><span class='time'> - " + time + "</span><div class='text'>" + commentText + "</div>";
               // i used this ref for the appenchild: https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild
             commentsBox.appendChild(newComment);
 
