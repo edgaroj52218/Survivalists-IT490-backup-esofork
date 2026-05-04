@@ -376,7 +376,7 @@ function requestProcessor($request) {
             return createPost($request['session_key'],$request['media'], $request['content'], $request['postedAt']);
 
         // will search track library and populate selected track to user_library
-        case "addMedia";
+        case "addMedia":
 
         case "addFavoriteTrack": 
             return addFavoriteTrack($request['session_key'],$request['title'], $request['artist']);
