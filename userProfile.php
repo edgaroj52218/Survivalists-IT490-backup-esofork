@@ -386,6 +386,27 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     // ratings which will allow for more similarly rated items
                     $rating = $document->rating; // will read the user's rating of the content and display the corresponding amount of stars
 
+                    // different cases to handle rating value and hold the HTML for numbner of stars
+                    switch ($rating) {
+                        case 1:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                        case 2:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                        case 3:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                    }
 
                     echo $username;
 
@@ -403,7 +424,13 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     echo "<p class='post-text'>";
                     $mediaData = json_decode($media, true);
                     $mediaTitle = $mediaData['title'] ?? $mediaData['name'];
-                    echo $mediaData['id'] . " | " . $mediaTitle . " | " . $mediaData['type'] . " | " . $rating;
+                    echo $mediaData['id'] . " | " . $mediaTitle . " | " . $mediaData['type'] . " | ";
+
+                    // wrapped stars in an <a> tag so that user can click on the rating to be recommended more simiarly rated songs
+                    echo "<a href='recommendations.php'>"; 
+                    echo $stars;
+                    echo "</a>";
+
                     //echo "&nbsp";
                     echo "<br>";
                     echo $content;
