@@ -5,9 +5,8 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     header('Location: login.html');
     exit();
 } else {
-    // change ip address to 100.105.160.23:27017 for real thing
-    // change ip address to 127.0.0.1:27017 for testing on local machine (when other VMs are offline)
-    $uri = 'mongodb://100.120.179.21:27017/';
+    $uri = "mongodb://127.0.0.1:27017/";
+
     $client = new MongoDB\Client($uri);
     $database = $client->survivalists_db;
     $userCollection = $database->reg_users;
@@ -383,6 +382,10 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     $media = $document->media;
                     $content = $document->content;
                     $postedAt = $document->postedAt;
+                
+                    // ratings which will allow for more similarly rated items
+                    $rating = $document->rating; // will read the user's rating of the content and display the corresponding amount of stars
+
 
                     echo $username;
 
@@ -398,8 +401,11 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
 
                     echo "<p class='post-text'>";
-                    echo $media;
-                    echo "&nbsp";
+                    $mediaData = json_decode($media, true);
+                    $mediaTitle = $mediaData['title'] ?? $mediaData['name'];
+                    echo $mediaData['id'] . " | " . $mediaTitle . " | " . $mediaData['type'] . " | " . $rating;
+                    //echo "&nbsp";
+                    echo "<br>";
                     echo $content;
                     echo "</p>";
 
