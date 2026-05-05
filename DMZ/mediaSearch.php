@@ -251,6 +251,20 @@
         .feedbackError{ 
            color:red; 
          }
+         .starRating {
+            user-select: none;
+         }
+
+         .star {
+            font-size: 3rem;
+            color: #ff9800;
+            background-color: unset;
+            border: none;
+         }
+
+         .star:hover {
+            cursor: pointer;
+         }
     </style>
 </head>
 <body>
@@ -291,6 +305,11 @@
             <h2>Create a Post</h2>
             <div id="selectedMediaPreview">
                 <div class="previewEmpty">Select an artist, album or track to post about.</div>
+            </div>
+             <div class="starRating">
+                <button class="star"> &#9734;</button>
+                <button class="star"> &#9734;</button>
+                <button class="star"> &#9734;</button>
             </div>
             <textarea id="postContent" placeholder="Share your thoughts..."></textarea>
             <!-- Hiding the button so they dont press it before the select something to post
