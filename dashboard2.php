@@ -189,7 +189,7 @@
         </div>
         <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
         https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
-        <a href="userProfile.php" class="logoutButton">Go Back to Profile &rarr;</a>
+        <a href="userProfile.php" class="logoutButton">&larr; Go Back to Profile</a>
     </div>
 </body>
 </html>
