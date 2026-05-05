@@ -426,8 +426,10 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     $mediaTitle = $mediaData['title'] ?? $mediaData['name'];
                     echo $mediaData['id'] . " | " . $mediaTitle . " | " . $mediaData['type'] . " | ";
 
-                    // wrapped stars in an <a> tag so that user can click on the rating to be recommended more simiarly rated songs
-                    echo "<a href='recommendations.php'>"; 
+                    // wrapped stars in an <a> tag so that user can click on the rating to be recommended more simiarly rated songs (tooltip)
+                    // hovering over stars will trigger tooltip that tells user they can view other recommendations with the same rating
+
+                    echo "<a href='recommendations.php' title='See similarly rated media'>"; 
                     echo $stars;
                     echo "</a>";
 
