@@ -253,6 +253,8 @@
          }
          .starRating {
             user-select: none;
+            display: flex;
+            justify-content: center;
          }
 
          .star {
@@ -295,9 +297,6 @@
             </form>
             <div id="results"></div>
         </div>
-        <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
-        https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
-        <a href="userProfile.php" class="logoutButton">Back to Profile &rarr;</a>
     </div>
 
     <!-- this will be the right card where the user can post-->
@@ -311,12 +310,15 @@
                 <button class="star"> &#9734;</button>
                 <button class="star"> &#9734;</button>
             </div>
+            <br> <!-- spacing -->
             <textarea id="postContent" placeholder="Share your thoughts..."></textarea>
             <!-- Hiding the button so they dont press it before the select something to post
 		    my reference was: https://www.w3schools.com/Tags/att_button_disabled.asp-->
             <button id="submitPostBtn" disabled>Post</button>
             <div id="postFeedback"></div>
-        </div>
+                    <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
+        https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
+        <a href="userProfile.php" class="logoutButton">&larr; Back to Profile</a>
     </div>
 </div>
 </body>
