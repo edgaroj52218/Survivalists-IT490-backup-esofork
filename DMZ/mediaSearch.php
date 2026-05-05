@@ -346,6 +346,25 @@ document.querySelectorAll("input[name='userFilters[]']").forEach(cb => {
     });
 });
 
+// code for the user star ratings
+// youtube ref: https://www.youtube.com/watch?v=fQIerHqB71w&pp=ygUfc3RhciByYXRpbmcgd2l0aCBodG1sIGNzcyAqJiBqcw%3D%3D
+const allStars = document.querySelectorAll('.star');
+let ratingValue = 0; // initial rating before user selection
+
+allStars.forEach((star, i) => {
+    star.onclick = function() {
+        let ratingValue = i + 1;
+
+        allStars.forEach((star,j) => {
+            if(ratingValue >= j + 1) {
+                star.innerHTML = '&#9733'; // star colored in (means selected)
+            } else {
+                star.innerHTML = '&#9734'; // empty star (not selected)
+            }
+        })
+    }
+})
+
 // this will hide or show information for the result, and it will get the id so it can togle
 function toggleDetails(id){
 
