@@ -9,7 +9,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     header('Location: login.html');
     exit();
 } else {
-    $uri = "mongodb://100.120.179.21:27017/";
+    $uri = "mongodb://127.0.0.1:27017/";
 
     $client = new MongoDB\Client($uri);
     $database = $client->survivalists_db;
@@ -149,103 +149,11 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
         <ul>
             <!-- updated links on nav bar -->
-<<<<<<< HEAD
-                <li><a href="feed.php">Feed</a></li>
-                &nbsp;
-                &nbsp;
-                <li><a href="dashboard2.php">Search Library</a></li>
-            </ul>
-        </div>
-        <div class="nav-right">
-            <div class="nav-user-icon online">
-                <a href="userProfile.php">Profile</a>
-            </div>
-        </div>
-
-    </nav>
-
-    <!-- profile page -->
-    <div class="profile-container">
-        <?php
-        // need to access each of the users in the logged in user's following array
-        $followingList = $user['following'] ?? [];
-
-        // for each user in the following array
-        foreach ($followingList as $userFollowed) {
-
-            // get the current user's posts array that the pointer is pointing at during iterating round
-            // following feed in this case will not include the logged in user's personal posts
-            //$userPosts = $userFollowed['posts'];
-
-            $followedUser = $userCollection->findOne(['username' => $userFollowed]);
-            $userPosts = $followedUser['posts'];
-
-            foreach ($userPosts as $postsMadeByUserFollowed) {
-                echo "<div class='post-container'>";
-                echo "<div class='post-row'>";
-                echo "<div class='user-profile'>";
-                echo "<i class='fa-solid fa-circle-user'>";
-                echo "</i>";
-                // <!-- will modify to user icons instead of images -->
-                echo "<div>";
-                // <!-- <p>RETRIEVE USERNAME FROM POST DATABASE</p> -->
-
-                echo "<p>";
-
-                // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
-                $posterUsername = $postsMadeByUserFollowed->username;
-                $media = $postsMadeByUserFollowed->media;
-                $content = $postsMadeByUserFollowed->content;
-                $postedAt = $postsMadeByUserFollowed->postedAt;
-
-                echo $posterUsername;
-
-                echo "</p>";
-
-                echo "<span>";
-
-                echo $postedAt;
-
-                echo "</span>";
-
-                // RETRIEVE DATE OBJECT FROM LOGGED IN USER'S POSTS ARRAY BY ITERATING W/ FOREACH LOOP
-
-
-                echo "<p class='post-text'>";
-                echo $media;
-                echo "<hr/ style='margin-top: 10px;'>".$content;
-                echo "</p>";
-
-                echo "</div>";
-                echo "</div>";
-                echo "<a href='#'>";
-                echo "<i class='fas fa-ellipsis-v'></i></a>";
-                echo "</div>";
-
-                // <!-- <p class="post-text">RETRIEVE USERNAME FROM POST DATABASE</p> -->
-
-                // <div class="post-row">
-                //     <div class="activity-icons">
-                //         <div><img src="../images/like.png" alt="like"> RETRIEVE COUNTER OBJECT FROM POST DATABASE
-                //         </div>
-                //         <div><img src="../images/comments.png" alt="comments"> RETRIEVE COUNTER OBJECT FROM POST
-                //             DATABASE</div>
-                //         <div><img src="../images/share.png" alt="shares"> RETRIEVE COUNTER OBJECT FROM POST DATABASE
-                //         </div>
-
-                //     </div>
-                // </div>
-                echo "</div>";
-            };
-        };
-        ?>
-=======
             <li><a href="feed.php">Feed</a></li>
             &nbsp;
             &nbsp;
             <li><a href="dashboard2.php">Search Library</a></li>
         </ul>
->>>>>>> 34bc30ee42d11dd0c9fa775f58530a7d99144906
     </div>
 
     <div class="nav-right">
@@ -299,6 +207,30 @@ foreach ($followingList as $userFollowed) {
         $content = $postsMadeByUserFollowed->content;
         $postedAt = $postsMadeByUserFollowed->postedAt;
 
+        // ratings which will allow for more similarly rated items
+        $rating = $postsMadeByUserFollowed->rating; // will read the user's rating of the content and display the corresponding amount of stars
+
+        switch ($rating) {
+                        case 1:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                        case 2:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                        case 3:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                    }
+
         $postId = isset($post['_id']) ? (string)$post['_id'] : uniqid(); // ADDED THIS KATEEEEE PUBLIC
         $currentUser = $user['username'];
 
@@ -317,15 +249,21 @@ foreach ($followingList as $userFollowed) {
 
 	 $mediaData = json_decode($media, true);
              if (isset($mediaData['name'])) {
-                $displayMedia = $mediaData['id'] . " | " . $mediaData['name'] . " | " . $mediaData['type'];
+                $displayMedia = $mediaData['id'] . " | " . $mediaData['name'] . " | " . $mediaData['type'] . " | ";
              } elseif (isset($mediaData['title'])) {
-                 $displayMedia = $mediaData['id'] . " | " . $mediaData['title'] . " | " . $mediaData['type'];
+                 $displayMedia = $mediaData['id'] . " | " . $mediaData['title'] . " | " . $mediaData['type'] . " | ";
              } else {
                  $displayMedia = $media;
               }
 
         echo "<p class='post-text'>";
         echo $displayMedia;
+        // wrapped stars in an <a> tag so that user can click on the rating to be recommended more simiarly rated songs (tooltip)
+                    // hovering over stars will trigger tooltip that tells user they can view other recommendations with the same rating
+
+                    echo "<a href='recommendations.php' title='See similarly rated media'>"; 
+                    echo $stars;
+                    echo "</a>";
         echo "<hr style='margin-top:10px; margin-bottom: 8px;  width:100%; margin-left:0; border:none; border-top:1px solid black;'>" . $content;
         echo "</p>";
         echo "</div>";
