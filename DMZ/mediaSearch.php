@@ -349,14 +349,14 @@ document.querySelectorAll("input[name='userFilters[]']").forEach(cb => {
 // code for the user star ratings
 // youtube ref: https://www.youtube.com/watch?v=fQIerHqB71w&pp=ygUfc3RhciByYXRpbmcgd2l0aCBodG1sIGNzcyAqJiBqcw%3D%3D
 const allStars = document.querySelectorAll('.star');
-let ratingValue = 0; // initial rating before user selection
+let starsRated = 0; // initial rating before user selection
 
 allStars.forEach((star, i) => {
     star.onclick = function() {
-        let ratingValue = i + 1;
+        starsRated = i + 1;
 
         allStars.forEach((star,j) => {
-            if(ratingValue >= j + 1) {
+            if(starsRated >= j + 1) {
                 star.innerHTML = '&#9733'; // star colored in (means selected)
             } else {
                 star.innerHTML = '&#9734'; // empty star (not selected)
@@ -517,6 +517,14 @@ document.getElementById("submitPostBtn").addEventListener("click", function() {
         feedback.className = "feedbackError";
         return;
     }
+
+    // included check for star rating
+        if (!starsRated) {
+        feedback.textContent = "You need to add a rating before posting.";
+        feedback.className = "feedbackError";
+        return;
+    }
+
      // when the req is happening this wil disable it. REF for textContent: https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
     this.disabled = true;
     feedback.textContent = "Posting...";
@@ -528,9 +536,13 @@ document.getElementById("submitPostBtn").addEventListener("click", function() {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
+
+        // need to add user star rating here
+        // will also need to add the rating attribute to current Post object schema in serverRabbitMQ.php
+        body: JSON.stringify({ 
             media:    pickedItem,
             content:  caption,
+            rating: starsRated,
             postedAt: Math.floor(Date.now() / 1000) // ref for timestamp on js https://stackoverflow.com/questions/221294/how-do-i-get-a-timestamp-in-javascript
         })
     })
