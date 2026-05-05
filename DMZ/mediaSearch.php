@@ -560,6 +560,15 @@ document.getElementById("submitPostBtn").addEventListener("click", function() {
             document.querySelectorAll(".resultCard").forEach(card => {
                 card.classList.remove("selected");
             });
+
+            // will need to reset stars from previous rating so none are filled in for next post
+        starsRated = 0;
+
+            // modified from initial script for coloring in stars v. un-coloring in stars
+        allStars.forEach((star,j) => {
+                star.innerHTML = '&#9734'; // empty star (not selected)
+            });
+
             this.disabled = true;
  
         } else {
