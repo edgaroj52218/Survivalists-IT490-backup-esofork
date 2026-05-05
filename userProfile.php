@@ -5,7 +5,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     header('Location: login.html');
     exit();
 } else {
-    $uri = "mongodb://100.105.160.23:27017/";
+    $uri = "mongodb://100.120.179.21:27017/";
 
     $client = new MongoDB\Client($uri);
     $database = $client->survivalists_db;
@@ -30,6 +30,15 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
             ]
         );
 
+        $userCollection->updateOne(
+            ["username" => $followUser],
+            [
+                '$addToSet' => [
+                    "followers" => $username
+                ]
+            ]
+        );
+
         header("Location: ".$_SERVER['PHP_SELF']);
         exit();
     }
@@ -48,6 +57,16 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                 ]
             ]
         );
+
+        $userCollection->updateOne(
+            ["username" => $unfollowUser],
+            [
+                '$pull' => [
+                    "followers" => $username
+                ]
+            ]
+        );
+
 
         header("Location: ".$_SERVER['PHP_SELF']);
         exit();
@@ -112,6 +131,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                         echo "</h3>";
                         ?>
+                        <a href='bio.php'>View Bio</a>
                         <?php
                         echo "<p>";
 
@@ -123,7 +143,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                         } else {
                             echo "Followed by $followerCount other(s)";
                         }
-
                         echo "</p>";
 
                         ?>
@@ -165,7 +184,10 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                         echo "<div class='user-curation'>";
                         echo "<i class='fa-solid fa-user'>";
                         echo "&nbsp";
+//			echo "<a href='userProfile.php?='";
+//			echo "urlencode($document)";
                         echo ($document);
+			//echo "</a>";
                         echo "</i>";
                         echo "</div>";
                     };
@@ -279,7 +301,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                             $filter = [];
 
-                            $options = ['limit' => 5]; // show top 5 results
+                            $options = ['limit' => 5]; // show top 5 results 
                             
                             // goes through reg_users database and limits to five
                             $users = $userCollection->find($filter, $options);
@@ -359,8 +381,16 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                 <a href="mediaSearch.php"><button class='createPost-btn'>+</button></a>
 
                 <?php
+		$postIndex = 0; // this is to track which post we're on
                 $userPosts = $user['posts'];
                 foreach ($userPosts as $document) {
+                    $media = $document->media;
+                    $content = $document->content;
+                    $postedAt = $document->postedAt;
+                    // here we check if the post is private or public, and if it doesnt have a status, it just makes it public
+                    $currentStatus = isset($document['postStatus']) ? $document['postStatus'] : 'public';
+
+
                     echo "<div class='post-container'>";
                     echo "<div class='post-row'>";
                     echo "<div class='user-profile'>";
@@ -397,18 +427,47 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
 
                     echo "<p class='post-text'>";
-                    echo $media;
-                    echo "&nbsp";
+                    $mediaData = json_decode($media, true);
+                    $mediaTitle = $mediaData['title'] ?? $mediaData['name'];
+                    echo $mediaData['id'] . " | " . $mediaTitle . " | " . $mediaData['type'];
+                    //echo "&nbsp";
+                    echo "<br>";
                     echo $content;
                     echo "</p>";
 
                     echo "</div>";
                     echo "</div>";
-                    echo "<a href='#'>";
-                    echo "<i class='fas fa-ellipsis-v'></i></a>";
-                    echo "</div>";
 
+		    // 3 DOTS LOGIC - KATE
+	            // 3 dots with dropdown for public/private toggle
+                    // REF for dropdown: https://www.w3schools.com/howto/howto_css_dropdown.php
+                    echo "<div class='post-options' style='position:relative'>";
+                    echo "<span class='dotsBtn' onclick='toggleDropdown(this)' style='cursor:pointer'>&#8942;</span>";
+                    echo "<div class='statusDropdown' style='display:none; position:absolute; right:0; background:#fff; border:1px solid black; border-radius:6px; padding:6px; z-index:10; min-width:120px'>";
+
+		    // logic for the public part
+                    echo "<form method='post' action='updatePostStatus.php'>";
+                    echo "<input type='hidden' name='postIndex' value='" . $postIndex . "'>"; // post id so we know which one update
+                    echo "<input type='hidden' name='postStatus' value='public'>";
+                     // im using bold to highlight the status which the post is on. 
+                    echo "<button type='submit' style='display:block; width:100%; background:none; border:none; text-align:left; padding:4px 8px; cursor:pointer;" . ($currentStatus === 'public' ? "font-weight:bold;" : "") . "'>Public</button>";
+                    echo "</form>";
+
+		     // logic for the private part
+                    echo "<form method='post' action='updatePostStatus.php'>";
+                    echo "<input type='hidden' name='postIndex' value='" . $postIndex . "'>"; //  post id so we know  which one update
+                    echo "<input type='hidden' name='postStatus' value='private'>";
+                    echo "<button type='submit' style='display:block; width:100%; background:none; border:none; text-align:left; padding:4px 8px; cursor:pointer;" . ($currentStatus === 'private' ? "font-weight:bold;" : "") . "'>Private</button>";
+                    echo "</form>";
+
+                    //echo "<a href='#'>";
+                    //echo "<i class='fas fa-ellipsis-v'></i></a>";
                     echo "</div>";
+		    echo "</div>";
+                    echo "</div>";
+		    echo "</div>";
+			// each post need a unique id so thats why we have to increment the indx
+		    $postIndex++;
                 };
                 ?>
             </div>
@@ -418,6 +477,29 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     <div class="footer">
         <p>&copy SocialTune, Inc. All rights reserved.</p>
     </div>
+
+    <script>
+     // logic so we can intereact with the 3 dots
+      // i used this reference to manage the next element: https://developer.mozilla.org/en-US/docs/Web/API/Element/nextElementSibling
+    function toggleDropdown(el) {
+        // this part tries to find the dropdown thats next to the dots, and if its showing it hides and if its hidding, it shows it
+        const dropdown = el.nextElementSibling;
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+     }
+
+     // here if our user touches somewhere else,, it will close the dropdown 
+     // i used this reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event
+    document.addEventListener('click', function(e) {
+          // not clicking the buttons so we just close everything. Refrence for the classList: https://developer.mozilla.org/en-US/docs/Web/API/Element/classList
+        if (!e.target.classList.contains('dotsBtn')) {
+            document.querySelectorAll('.statusDropdown').forEach(function(d) {
+                d.style.display = 'none';
+            });
+        }
+    });
+    </script>
+
+
 
 </body>
 
