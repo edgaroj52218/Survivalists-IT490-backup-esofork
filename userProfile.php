@@ -20,12 +20,23 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
         $followUser = $_POST['follow_user']; // retrieve userFollowed username
 
-        // remove the sent username from the logged in user's following array
+        // ADD the sent username to the logged in user's following array
         $userCollection->updateOne(
             ["username" => $username],
             [
                 '$addToSet' => [
                     "following" => $followUser
+                ]
+            ]
+        );
+
+        // BUG: when a user is followed, their follower count has not been going up
+        // ADD the logged in user's username to the follower array of the followed user
+        $userCollection->updateOne(
+            ["username" => $followUser],
+            [
+                '$addToSet' => [
+                    "followers" => $username
                 ]
             ]
         );
@@ -49,6 +60,16 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
             ]
         );
 
+        // remove the logged in user's username from the follower array of the followed user
+        $userCollection->updateOne(
+            ["username" => $unfollowUser],
+            [
+                '$pull' => [
+                    "followers" => $username
+                ]
+            ]
+        );
+        
         header("Location: ".$_SERVER['PHP_SELF']);
         exit();
     }
