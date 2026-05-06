@@ -207,6 +207,30 @@ foreach ($followingList as $userFollowed) {
         $content = $postsMadeByUserFollowed->content;
         $postedAt = $postsMadeByUserFollowed->postedAt;
 
+	// ratings which will allow for more similarly rated items
+        $rating = isset($postsMadeByUserFollowed->rating) ? $postsMadeByUserFollowed->rating : null; // will read the user's rating of the content and display the corresponding amount of stars
+	$stars = "";
+        switch ($rating) {
+                        case 1:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                        case 2:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                        case 3:
+                            $stars = "
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                        <class='star'> &#9733;</>
+                                     ";
+                            break;
+                    }
+
         $postId = isset($post['_id']) ? (string)$post['_id'] : uniqid(); // ADDED THIS KATEEEEE PUBLIC
         $currentUser = $user['username'];
 
@@ -225,15 +249,21 @@ foreach ($followingList as $userFollowed) {
 
 	 $mediaData = json_decode($media, true);
              if (isset($mediaData['name'])) {
-                $displayMedia = $mediaData['id'] . " | " . $mediaData['name'] . " | " . $mediaData['type'];
+                $displayMedia = $mediaData['id'] . " | " . $mediaData['name'] . " | " . $mediaData['type'] . " | ";
              } elseif (isset($mediaData['title'])) {
-                 $displayMedia = $mediaData['id'] . " | " . $mediaData['title'] . " | " . $mediaData['type'];
+                 $displayMedia = $mediaData['id'] . " | " . $mediaData['title'] . " | " . $mediaData['type'] . " | ";
              } else {
                  $displayMedia = $media;
               }
 
         echo "<p class='post-text'>";
         echo $displayMedia;
+	// wrapped stars in an <a> tag so that user can click on the rating to be recommended more simiarly rated songs (tooltip)
+                    // hovering over stars will trigger tooltip that tells user they can view other recommendations with the same rating
+			
+                    echo "<a href='recommendations.php' title='See similarly rated media'>"; 
+                    echo $stars;
+                    echo "</a>";
         echo "<hr style='margin-top:10px; margin-bottom: 8px;  width:100%; margin-left:0; border:none; border-top:1px solid black;'>" . $content;
         echo "</p>";
         echo "</div>";

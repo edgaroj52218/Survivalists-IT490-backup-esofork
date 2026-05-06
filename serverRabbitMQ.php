@@ -7,7 +7,7 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 require '../vendor/autoload.php';
 
-$uri = 'mongodb://100.105.160.23:27017/';
+$uri = 'mongodb://100.120.179.21:27017/';
 $mongoClient = new MongoDB\Client($uri);
 $database = $mongoClient->survivalists_db;
 
@@ -106,7 +106,8 @@ function login($username, $password) {
 
 // populates postCollection everytime a user posts something
 // FIXED: missing media parameter
-function createPost($session_key, $media, $content, $postedAt) {
+// ADDED: rating parameter to accept user star ratings selection
+function createPost($session_key, $media, $content, $rating, $postedAt) {
     global $database;
 
     $postCollection = $database->posts_db;
@@ -130,7 +131,9 @@ function createPost($session_key, $media, $content, $postedAt) {
         "username" => $username,
         "media" => $media,
         "content" => $content,
-        "postedAt" => time()
+	"rating" => $rating, // here is what we will use to be able to differentiate 1 to 3 star rated songs for recommendations
+                             // our recommendation logic will rely mostly on star ratings, so if you click on a post of a song that is rated with 3 stars, there will be another page that shows only 3-star rated songs as recommendations
+        "postedAt" => time(),
     ];
 
     // post Object populated into postCollection (will be used for the master feed)
@@ -373,7 +376,7 @@ function requestProcessor($request) {
 	        return login($request['username'],$request['password']); 
 
         case "createPost": // will generate new post entry for user and populate post collection
-            return createPost($request['session_key'],$request['media'], $request['content'], $request['postedAt']);
+            return createPost($request['session_key'],$request['media'], $request['content'], $request['rating'], $request['postedAt']); // added rating for star collection 
 
         // will search track library and populate selected track to user_library
         case "addMedia";

@@ -251,6 +251,22 @@
         .feedbackError{ 
            color:red; 
          }
+	.starRating {
+            user-select: none;
+            display: flex;
+            justify-content: center;
+         }
+
+         .star {
+            font-size: 3rem;
+            color: #ff9800;
+            background-color: unset;
+            border: none;
+         }
+
+         .star:hover {
+            cursor: pointer;
+         }
     </style>
 </head>
 <body>
@@ -279,6 +295,8 @@
                     <label><input type="checkbox" name="userFilters[]" value="tracks"> Tracks</label>
                 </div>
             </form>
+
+
             <div id="results"></div>
         </div>
         <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
@@ -292,6 +310,12 @@
             <div id="selectedMediaPreview">
                 <div class="previewEmpty">Select an artist, album or track to post about.</div>
             </div>
+            <div class="starRating">
+                <button class="star"> &#9734;</button>
+                <button class="star"> &#9734;</button>
+                <button class="star"> &#9734;</button>
+            </div>
+            <br> <!-- spacing -->
             <textarea id="postContent" placeholder="Share your thoughts..."></textarea>
             <!-- Hiding the button so they dont press it before the select something to post
 		    my reference was: https://www.w3schools.com/Tags/att_button_disabled.asp-->
@@ -326,6 +350,25 @@ document.querySelectorAll("input[name='userFilters[]']").forEach(cb => {
 
     });
 });
+
+// code for the user star ratings
+// youtube ref: https://www.youtube.com/watch?v=fQIerHqB71w&pp=ygUfc3RhciByYXRpbmcgd2l0aCBodG1sIGNzcyAqJiBqcw%3D%3D
+const allStars = document.querySelectorAll('.star');
+let starsRated = 0; // initial rating before user selection
+
+allStars.forEach((star, i) => {
+    star.onclick = function() {
+        starsRated = i + 1;
+
+        allStars.forEach((star,j) => {
+            if(starsRated >= j + 1) {
+                star.innerHTML = '&#9733'; // star colored in (means selected)
+            } else {
+                star.innerHTML = '&#9734'; // empty star (not selected)
+            }
+        })
+    }
+})
 
 // this will hide or show information for the result, and it will get the id so it can togle
 function toggleDetails(id){
@@ -479,6 +522,13 @@ document.getElementById("submitPostBtn").addEventListener("click", function() {
         feedback.className = "feedbackError";
         return;
     }
+    // included check for star rating
+        if (!starsRated) {
+        feedback.textContent = "You need to add a rating before posting.";
+        feedback.className = "feedbackError";
+        return;
+    }
+
      // when the req is happening this wil disable it. REF for textContent: https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent
     this.disabled = true;
     feedback.textContent = "Posting...";
@@ -493,6 +543,7 @@ document.getElementById("submitPostBtn").addEventListener("click", function() {
         body: JSON.stringify({
             media:    pickedItem,
             content:  caption,
+	    rating: starsRated,
             postedAt: Math.floor(Date.now() / 1000) // ref for timestamp on js https://stackoverflow.com/questions/221294/how-do-i-get-a-timestamp-in-javascript
         })
     })
@@ -510,6 +561,15 @@ document.getElementById("submitPostBtn").addEventListener("click", function() {
             document.querySelectorAll(".resultCard").forEach(card => {
                 card.classList.remove("selected");
             });
+	    // will need to reset stars from previous rating so none are filled in for next post
+        starsRated = 0;
+
+            // modified from initial script for coloring in stars v. un-coloring in stars
+        allStars.forEach((star,j) => {
+                star.innerHTML = '&#9734'; // empty star (not selected)
+            });
+
+
             this.disabled = true;
  
         } else {
@@ -519,7 +579,6 @@ document.getElementById("submitPostBtn").addEventListener("click", function() {
         }
     })
 });
-
 
 
 </script>

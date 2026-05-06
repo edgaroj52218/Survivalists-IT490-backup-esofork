@@ -45,6 +45,7 @@ $createPostRequest = [
     'session_key' => $_COOKIE['SessionKey'],
     'media'     => $mediaJson,              // full item JSON blob as a string
     'content'   => $input['content'],
+    'rating'    => $input['rating'], // added rating attribute for star UI
     'postedAt'  => $input['postedAt'] ?? time()
 ];
 
@@ -55,4 +56,3 @@ $serverResponse = $client->send_request($createPostRequest);
 // Return whatever the server sent back so the front-end can read returnCode
 echo json_encode($serverResponse);
 ?>
-

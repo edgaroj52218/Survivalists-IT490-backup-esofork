@@ -4,6 +4,7 @@ require __DIR__.'/vendor/autoload.php';
 if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksforgeeks.org/php/php-cookies/
     header('Location: login.html');
     exit();
+
 } else {
     $uri = "mongodb://100.120.179.21:27017/";
 
@@ -11,66 +12,24 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     $database = $client->survivalists_db;
     $userCollection = $database->reg_users;
 
-    $user = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
+    $userCurrent = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
     
+    // Target profile user
+    $username = $_GET['username'] ?? null;
+
+    if (!$username) {
+        die("the user wasnt found");
+    }
+
+    $user = $userCollection->findOne(['username' => $username]);
+
+    if (!$user) {
+        die("the user wast found");
+    }
+
     $username = $user['username'];
+     $bio = $user['bio'] ?? [];
 
-    // logic for following user when follow button pressed
-    if(isset($_POST['follow_user'])){
-
-        $followUser = $_POST['follow_user']; // retrieve userFollowed username
-
-        // remove the sent username from the logged in user's following array
-        $userCollection->updateOne(
-            ["username" => $username],
-            [
-                '$addToSet' => [
-                    "following" => $followUser
-                ]
-            ]
-        );
-
-        $userCollection->updateOne(
-            ["username" => $followUser],
-            [
-                '$addToSet' => [
-                    "followers" => $username
-                ]
-            ]
-        );
-
-        header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
-    }
-
-    // logic for unfollowing user when unfollow button pressed
-    if(isset($_POST['unfollow_user'])){
-
-        $unfollowUser = $_POST['unfollow_user']; // retrieve userUnfollowed username
-
-        // remove the sent username from the logged in user's following array
-        $userCollection->updateOne(
-            ["username" => $username],
-            [
-                '$pull' => [
-                    "following" => $unfollowUser
-                ]
-            ]
-        );
-
-        $userCollection->updateOne(
-            ["username" => $unfollowUser],
-            [
-                '$pull' => [
-                    "followers" => $username
-                ]
-            ]
-        );
-
-
-        header("Location: ".$_SERVER['PHP_SELF']);
-        exit();
-    }
 }
 ?>
 
@@ -84,7 +43,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Friend Profile | SocialTune</title>
+    <title>View Profile | SocialTune</title>
     <link rel="stylesheet" href="/user/style.css">
     <script src="https://kit.fontawesome.com/95d0fccd5e.js" crossorigin="anonymous"></script>
 </head>
@@ -131,7 +90,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                         echo "</h3>";
                         ?>
-                        <a href='bio.php'>View Bio</a>
+                        <span><?= $bio['email'] ?? '' ?></span>
                         <?php
                         echo "<p>";
 
@@ -148,6 +107,13 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                         ?>
                     </div>
                 </div>
+                <p class="post-text">
+                    <strong>Name:</strong> <?= $bio['name'] ?? '-' ?><br>
+                    <strong>DOB:</strong> <?= $bio['dob'] ?? '-' ?><br>
+                    <strong>Age:</strong> <?= $bio['age'] ?? '-' ?><br>
+                    <strong>Facebook:</strong> <?= $bio['facebook'] ?? '-' ?><br>
+                    <strong>Instagram:</strong> <?= $bio['instagram'] ?? '-' ?>
+                </p>
             </div>
         </div>
 
@@ -160,17 +126,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     </div>
 
                     <?php
-                    echo "<p>";
-
-                    // <p>RETRIEVE COUNTER OF FOLLOWING FROM DATABASE</p>
-                    $followingCount = count($user['following']);
-                    if ($followingCount == null) {
-                        echo "Not following anyone yet.";
-                    } else {
-                        echo $followingCount;
-                    }
-                    echo "</p>";
-
+                    
                     echo "<div class='friends-box'>";
 
                     // RETRIEVE USERNAMES OF PEOPLE USER IS FOLLOWING
@@ -198,7 +154,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                 <div class="profile-intro">
                     <div class="title-box">
                         <h3>Favorite Tracks</h3>
-                        <a href="addFavoriteTrack.php">Add a track</a>
                     </div>
                     <!-- <p>RETRIEVE TRACKS FROM USER_LIBRARY DATABASE</p> -->
                     <?php
@@ -227,7 +182,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                 <div class="profile-intro">
                     <div class="title-box">
                         <h3>Favorite Artists</h3>
-                        <a href="addFavoriteArtist.php">Add an artist</a>
                     </div>
                     <!-- <p>RETRIEVE ARTISTS FROM USER_LIBRARY DATABASE</p> -->
                     <div class="friends-box">
@@ -257,7 +211,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                 <div class="profile-intro">
                     <div class="title-box">
                         <h3>Favorite Albums</h3>
-                        <a href="addFavoriteAlbum.php">Add an album</a>
                     </div>
                     <!-- <p>RETRIEVE ALBUMS FROM USER_LIBRARY DATABASE</p> -->
                     <div class="friends-box">
@@ -285,86 +238,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                         ?>
                     </div>
                 </div>
-                <div class="profile-intro">
-                    <div class="title-box">
-                        <!-- follow recommendations (temporarily will be on left side bar but will update in the future to be on the right </p> -->
-
-                        <h3>Who to Follow</h3>
-                    </div>
-                    <div class="friends-box">
-                        <?php
-
-                            // FOREACH LOOP THAT WILL GO THROUGH THE DIFFERENT REGISTERED USER OBJECTS' USERNAMES IN REG_USERS COLLECTION (MINUS THE LOGGED IN USER)
-                            // REF: https://www.tutorialspoint.com/php_mongodb/php_mongodb_limit_records.htm
-
-                            // scrapped and fixed original follow button logic 
-
-                            $filter = [];
-
-                            $options = ['limit' => 5]; // show top 5 results 
-                            
-                            // goes through reg_users database and limits to five
-                            $users = $userCollection->find($filter, $options);
-
-                            if(isset($user['following'])) {
-                                $followingList = $user['following']; // retrieve logged in user's following list
-                            } else {
-                                $followingList = [];
-                            }
-
-                            // loop through each of the five recommended users
-                            foreach($users as $document) {
-
-                                $recommendUsername = $document['username']; // username of the current user during iteration
-
-                                // needs to make sure recommended user is not logged in user
-                                if($recommendUsername != $username) {
-
-                                    // populate the table w/ current user pointer's username
-                                    echo "<div class='user-curation'>";
-                                    echo $recommendUsername;
-                                    echo "&nbsp";
-
-                                    $isFollowing = false; 
-
-                                    // loop through the following list of logged in user
-
-                                    // for every person followed in followingList
-                                    foreach($followingList as $userFollowed) {
-                                        if($userFollowed == $recommendUsername) { // check to see if current user pointer in following array == one of the recommended usernames
-                                            $isFollowing = true;
-                                            break; 
-                                        }
-                                    }
-
-                                    // follow/unfollow button
-                                    if($isFollowing) {
-
-                                        echo "<form method='post' style='display:inline'>";
-                                        echo "<input type='hidden' name='unfollow_user' value='";
-                                        echo $recommendUsername; //when pressed, send the affected username to remove from user's following array
-                                        echo "'>";
-                                        echo "<button type='submit' class='unfollow-btn'>Unfollow</button>"; // button styling
-                                        echo "</form>";
-
-                                    } else {
-
-                                        echo "<form method='post' style='display:inline'>";
-                                        echo "<input type='hidden' name='follow_user' value='";
-                                        echo $recommendUsername; //vice versa
-                                        echo "'>";
-                                        echo "<button type='submit' class='follow-btn'>Follow</button>"; // diff button styling for unfollowing
-                                        echo "</form>";                
-
-                                    }
-
-                                    echo "</div>";
-
-                                }
-                            }
-                        ?>
-                    </div>
-                </div>
             </div>
             <div class="post-col">
                 <!-- commented out the write post container because searchBar.php will be implemented from kate, so media and content can be populated and inserted on that page instead -->
@@ -376,20 +249,14 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                 </div> -->
 
-                <!-- integrate kate's search bar here -->
-                <!-- created button class for styling -->
-                <a href="mediaSearch.php"><button class='createPost-btn'>+</button></a>
-
                 <?php
-		$postIndex = 0; // this is to track which post we're on
                 $userPosts = $user['posts'];
                 foreach ($userPosts as $document) {
-                    $media = $document->media;
-                    $content = $document->content;
-                    $postedAt = $document->postedAt;
-                    // here we check if the post is private or public, and if it doesnt have a status, it just makes it public
-                    $currentStatus = isset($document['postStatus']) ? $document['postStatus'] : 'public';
-
+		    $post = (array)$document;
+	            $postStatus = isset($post['postStatus']) ? $post['postStatus'] : 'public'; 
+           	    if ($postStatus === 'private' && $user['username'] !== $userCurrent['username']) {
+                        continue;
+                    }
 
                     echo "<div class='post-container'>";
                     echo "<div class='post-row'>";
@@ -438,6 +305,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                             break;
                     }
 
+
                     echo $username;
 
                     echo "</p>";
@@ -455,12 +323,9 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     $mediaData = json_decode($media, true);
                     $mediaTitle = $mediaData['title'] ?? $mediaData['name'];
                     echo $mediaData['id'] . " | " . $mediaTitle . " | " . $mediaData['type'] . " | ";
-
 		    echo "<a href='recommendations.php' title='See similarly rated media'>"; 
                     echo $stars;
                     echo "</a>";
-
-
                     //echo "&nbsp";
                     echo "<br>";
                     echo $content;
@@ -468,37 +333,11 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                     echo "</div>";
                     echo "</div>";
-
-		    // 3 DOTS LOGIC - KATE
-	            // 3 dots with dropdown for public/private toggle
-                    // REF for dropdown: https://www.w3schools.com/howto/howto_css_dropdown.php
-                    echo "<div class='post-options' style='position:relative'>";
-                    echo "<span class='dotsBtn' onclick='toggleDropdown(this)' style='cursor:pointer'>&#8942;</span>";
-                    echo "<div class='statusDropdown' style='display:none; position:absolute; right:0; background:#fff; border:1px solid black; border-radius:6px; padding:6px; z-index:10; min-width:120px'>";
-
-		    // logic for the public part
-                    echo "<form method='post' action='updatePostStatus.php'>";
-                    echo "<input type='hidden' name='postIndex' value='" . $postIndex . "'>"; // post id so we know which one update
-                    echo "<input type='hidden' name='postStatus' value='public'>";
-                     // im using bold to highlight the status which the post is on. 
-                    echo "<button type='submit' style='display:block; width:100%; background:none; border:none; text-align:left; padding:4px 8px; cursor:pointer;" . ($currentStatus === 'public' ? "font-weight:bold;" : "") . "'>Public</button>";
-                    echo "</form>";
-
-		     // logic for the private part
-                    echo "<form method='post' action='updatePostStatus.php'>";
-                    echo "<input type='hidden' name='postIndex' value='" . $postIndex . "'>"; //  post id so we know  which one update
-                    echo "<input type='hidden' name='postStatus' value='private'>";
-                    echo "<button type='submit' style='display:block; width:100%; background:none; border:none; text-align:left; padding:4px 8px; cursor:pointer;" . ($currentStatus === 'private' ? "font-weight:bold;" : "") . "'>Private</button>";
-                    echo "</form>";
-
-                    //echo "<a href='#'>";
-                    //echo "<i class='fas fa-ellipsis-v'></i></a>";
+                    echo "<a href='#'>";
+                    echo "<i class='fas fa-ellipsis-v'></i></a>";
                     echo "</div>";
-		    echo "</div>";
+
                     echo "</div>";
-		    echo "</div>";
-			// each post need a unique id so thats why we have to increment the indx
-		    $postIndex++;
                 };
                 ?>
             </div>
@@ -508,29 +347,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     <div class="footer">
         <p>&copy SocialTune, Inc. All rights reserved.</p>
     </div>
-
-    <script>
-     // logic so we can intereact with the 3 dots
-      // i used this reference to manage the next element: https://developer.mozilla.org/en-US/docs/Web/API/Element/nextElementSibling
-    function toggleDropdown(el) {
-        // this part tries to find the dropdown thats next to the dots, and if its showing it hides and if its hidding, it shows it
-        const dropdown = el.nextElementSibling;
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-     }
-
-     // here if our user touches somewhere else,, it will close the dropdown 
-     // i used this reference: https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event
-    document.addEventListener('click', function(e) {
-          // not clicking the buttons so we just close everything. Refrence for the classList: https://developer.mozilla.org/en-US/docs/Web/API/Element/classList
-        if (!e.target.classList.contains('dotsBtn')) {
-            document.querySelectorAll('.statusDropdown').forEach(function(d) {
-                d.style.display = 'none';
-            });
-        }
-    });
-    </script>
-
-
 
 </body>
 

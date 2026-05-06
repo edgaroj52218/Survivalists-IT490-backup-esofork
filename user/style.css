@@ -639,3 +639,7 @@ nav {
     background-color: #5ebec4;
     color: #fff;
 }
+/* updated <a> tag to be appropriate star color */
+.post-text a {
+    color: #ff9800
+}
