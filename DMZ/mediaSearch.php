@@ -10,6 +10,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Survivalists - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!--<link rel="stylesheet" href="/user/style.css"-->
     <style>
         /* I picked this font but we can change it later on. Link that i accessed:
@@ -111,11 +113,11 @@
             flex-direction: row; 
             flex-wrap: wrap; 
             gap: 10px;
-            width: 700px;
+            width: 100%;
             position: absolute;
             top: 145px;  
             left: 50px;
-            right:50px;     
+            right:50px;
         }
 
         .searchInput {
@@ -184,11 +186,18 @@
         .logoutButton:hover {
             text-decoration: underline;
         }
+        
+                #filters{
+	width:100%;
+	font-family:'Plus Jakarta Sans', sans-serif;
+        }
+    
 
         #results{
 	width:100%;
 	font-family:'Plus Jakarta Sans', sans-serif;
         }
+    
 
         .resultCard{
 	   background:#FDF5DF;
@@ -276,7 +285,7 @@
             <div class="profileUser">
                 <!-- i got the image from here: https://unsplash.com/photos/collection-of-various-music-album-covers-998pvuxqK6Y -->
                 <img src="images/dashboardImage.jpg" alt="User">
-                <h1>Welcome back to SocialTune!</h1>
+                <h1>What are you listening to?</h1>
             </div>
             
         </div>
@@ -287,15 +296,18 @@
             <form class="searchBar" id="searchForm">
                 <input type="text" name="userInput" class="searchInput" placeholder="Search for songs, albums..." required>
                 <button type="submit" class="searchButton">Find</button>
-
-                <div class="checkBoxes">
+            </form>
+            <div id="filters">
+                    <div class="checkBoxes">
                     <span>Filter by: </span>
                     <label><input type="checkbox" name="userFilters[]" value="artists" checked> Artists</label>
                     <label><input type="checkbox" name="userFilters[]" value="albums"> Albums</label>
                     <label><input type="checkbox" name="userFilters[]" value="tracks"> Tracks</label>
                 </div>
-            </form>
-            <div id="results"></div>
+            </div>
+            <br>
+            <div id="results">
+            </div>
         </div>
     </div>
 
@@ -318,7 +330,7 @@
             <div id="postFeedback"></div>
                     <!-- I added the arrow effect on the login, register and dashboard because i saw it in one website and i thought it looked good and modern. I got the link from:
         https://www.w3schools.com/charsets/ref_utf_arrows.asp -->
-        <a href="userProfile.php" class="logoutButton">&larr; Back to Profile</a>
+        <a href="userProfile.php" class="logoutButton">&larr; Back to profile</a>
     </div>
 </div>
 </body>
