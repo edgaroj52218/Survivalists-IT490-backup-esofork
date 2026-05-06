@@ -10,6 +10,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Survivalists - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         /* I picked this font but we can change it later on. Link that i accessed:
         https://fonts.google.com/specimen/Playfair+Display
@@ -26,6 +28,8 @@
             align-items: center;
             /*margin: 0;*/
         }
+        
+        
         /* I made the dashboard box bigger (width) so we have space to add more stuff, but we can change this value later on */
         .dashboard {
             background: white;
@@ -37,6 +41,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            margin-top: 100px;
         }
         .header {
             display: flex;
