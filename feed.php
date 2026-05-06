@@ -260,8 +260,8 @@ foreach ($followingList as $userFollowed) {
         echo $displayMedia;
 	// wrapped stars in an <a> tag so that user can click on the rating to be recommended more simiarly rated songs (tooltip)
                     // hovering over stars will trigger tooltip that tells user they can view other recommendations with the same rating
-			
-                    echo "<a href='recommendations.php' title='See similarly rated media'>"; 
+
+	            echo "<a href='recommendations.php?rating=".$rating."' title='See similarly rated media'>";
                     echo $stars;
                     echo "</a>";
         echo "<hr style='margin-top:10px; margin-bottom: 8px;  width:100%; margin-left:0; border:none; border-top:1px solid black;'>" . $content;

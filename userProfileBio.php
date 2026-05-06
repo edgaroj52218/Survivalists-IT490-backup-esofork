@@ -323,7 +323,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     $mediaData = json_decode($media, true);
                     $mediaTitle = $mediaData['title'] ?? $mediaData['name'];
                     echo $mediaData['id'] . " | " . $mediaTitle . " | " . $mediaData['type'] . " | ";
-		    echo "<a href='recommendations.php' title='See similarly rated media'>"; 
+		    echo "<a href='recommendations.php?rating=".$rating."' title='See similarly rated media'>"; 
                     echo $stars;
                     echo "</a>";
                     //echo "&nbsp";
