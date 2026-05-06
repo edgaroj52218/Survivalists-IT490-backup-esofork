@@ -11,13 +11,17 @@ $db = $client->survivalists_db;
 $collection = $db->reg_users;
  // here we need to  get the rating from the url that i did on userProfile
 $selectedRating = isset($_GET['rating']) ? (int)$_GET['rating'] : 0;
+
+$userActive = $collection->findOne(['keySession' => $_COOKIE['SessionKey']]);
+$loggedInUsername = $userActive['username'];
+
 $users = $collection->find();
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Similar Rated Songs</title>
+    <title>Similar Rated Media</title>
     <link rel="stylesheet" href="/user/style.css">
     <script src="https://kit.fontawesome.com/95d0fccd5e.js"></script>
 
@@ -103,11 +107,15 @@ $users = $collection->find();
 
     </nav>
 <div class="container">
-    <h2>SIMILAR RATED SONGS</h2>
+    <h2>SIMILAR RATED MEDIA</h2>
 
     <?php
      // foreach loop so im able to go through all the user we have
     foreach ($users as $user) {
+           // added this if statement to ignore the current user so we dont display their recommendations
+        if ($user['username'] == $loggedInUsername) {
+		continue;
+        }
 
         foreach ($user['posts'] as $post) {
 		// if the post doesnt matcch the rating, then we just ignore it
