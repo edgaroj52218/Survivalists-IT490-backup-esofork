@@ -99,7 +99,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 	    background-color: #5EBEC4 !important;
 	}
         .sidebar-container {
-          width: 280px;
+          width: 290px;
 	  height: auto;
  	  margin: 10px 0;
   	  padding: 20px;
@@ -127,7 +127,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 	     align-items: center;
              gap: 7px;
 
-              width: 98%;
+              width: 94%;
   	     height: auto;
              margin: 10px 0;
              padding: 20px;
@@ -152,21 +152,25 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
              border: 1px solid black;
 
 }
-        .post-container {
-            display: flex;
-            justify-content: space-between;
-          width: 100%;
-  	height: auto;
-  	margin: 10px;
-  	padding: 25px;
-  	background-color: white;
-}
 
+	.post-container {
+	    width: 90% !important;
+	}
 .post-container a {
     text-decoration: none;
 }
 	.user-profile i {
 	    margin-top: 10px !important;
+	}
+	.post-row {
+	    display: flex;
+	    width: 100%;
+	    align-items: flex-start;
+	    margin-top: 10px;
+	}
+	.createPost-btn {
+	    margin-left: 25px;
+	    margin-bottom: 3px;
 	}
 </style>
 
@@ -207,9 +211,8 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
     <!-- all user profile info here -->
     <div class="profile-container">
-        
         <!-- user header/bio here -->
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-12">
 
             <!-- user info -->
