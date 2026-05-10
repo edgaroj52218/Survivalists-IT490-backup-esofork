@@ -13,7 +13,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     $userCollection = $database->reg_users;
 
     $userCurrent = $userCollection->findOne(['keySession' => $_COOKIE['SessionKey']]);
-    
+
     // Target profile user
     $username = $_GET['username'] ?? null;
 
@@ -26,7 +26,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
     if (!$user) {
         die("the user wast found");
     }
-
+ 
     $username = $user['username'];
      $bio = $user['bio'] ?? [];
 
@@ -39,46 +39,153 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
 <!DOCTYPE html>
 <html lang="en">
-
+ 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Profile | SocialTune</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/user/style.css">
     <script src="https://kit.fontawesome.com/95d0fccd5e.js" crossorigin="anonymous"></script>
 </head>
-
+<style>
+    body {
+            max-width: 100%;
+            background-color: #FDF5DF;
+    }
+    .navbar {
+        background-color: #5EBEC4 !important;
+    }
+    .sidebar-container {
+          width: 100%;
+          height: auto;
+          margin: 10px 0;
+          padding: 20px;
+          background-color: white;
+          border-radius: 10px;
+          border-left: 6px solid #5EBEC4;
+          border-top: none;
+          border-right: none;
+          border-bottom: none;
+        }
+    .sidebar-container a {
+	     font-size: 10px;
+	     font-weight: normal;
+	     text-align: right;
+        }
+	.sidebar-container h3 {
+	    font-weight: bold !important;
+	}
+	.sidebar-container h5 {
+	     font-weight: bold !important;
+	}
+          .info-container {
+	     display: flex;
+	     flex-direction: row;
+	     align-items: center;
+             gap: 7px;
+              width: 100%;
+  	     height: auto;
+             margin: 10px 0;
+             padding: 20px;
+             background-color: white;
+             border-radius: 10px;
+	     border: 1px solid #D3D3D3;
+	     border-top: 6px solid #5EBEC5;
+             box-sizing: border-box;
+	  }
+	.info-container i {
+	    margin-top: 0 !important;
+	    top: 14px;
+	    position: relative;
+	    align-self: flex-start;
+	}
+	.info-container h3 {
+	    font-weight: bold !important;
+	    margin-bottom: 0;
+	}
+	.info-container p {
+	    margin-bottom: 0 !important;
+	    margin-top: 0;
+	    font-size: 13px;
+	}
+	.info-container span {
+	    display: block;
+	    font-size: 15px;
+	}
+post-container {
+	    width: 90% !important;
+	}
+.post-container a {
+    text-decoration: none;
+}
+	.user-profile i {
+	    margin-top: 10px !important;
+	}
+ 
+	.post-row {
+	    display: flex;
+	    margin-top: 10px;
+	}
+	.col-lg-4 {
+	    padding-right: 20px;
+            margin-top: 0;
+	}
+	.col-lg-8 {
+	    padding-top: 0;
+	    margin-top: 0;
+	}
+	.row {
+	    align-items: flex-start;
+	    margin-top: 15px !important;
+	}
+	.info-container .post-text {
+	    margin-left: -42px;
+	    margin-bottom: 0;
+            font-size: 15px !important;
+	}
+	.post-container .post-text {
+             margin-left: 0;
+	}
+</style>
 <body>
-
-    <nav>
-        <div class="nav-left">
-            <h3 class="logo">SocialTune</h3>
-
-            <!-- will eventually adjust nav items accordingly for future deliverables AKA these are just placeholders for now -->
-            <!-- will use fontawesome icons for navbars -->
-
-            <ul>
-            <!-- updated links on nav bar -->
-                <li><a href="feed.php">Feed</a></li>
-                &nbsp;
-                &nbsp;
-                <li><a href="dashboard2.php">Search Library</a></li>
-            </ul>
-        </div>
-        <div class="nav-right">
-            <div class="nav-user-icon online">
-                <a href="userProfile.php">Profile</a>
-            </div>
-        </div>
-
-    </nav>
-
-    <!-- profile page -->
-    <div class="profile-container">
-        <!-- <img src="../images/cover.png" alt="cover photo" class="cover-img"> -->
-        <div class="profile-details">
-            <div class="pd-left">
-                <div class="pd-row">
+     <!-- nav here -->
+    <!-- navbar ref from bootstrap: https://getbootstrap.com/docs/5.3/components/navbar/ -->
+    <div class="nav-container">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">SocialTune</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="feed.php">Feed</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="dashboard2.php">Library</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link active dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <?php echo $username; ?>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="userProfile.php">View profile</a></li>
+            <li><a class="dropdown-item" href="login.html">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+</div>
+   
+<!-- profile page -->
+<div class="profile-container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="info-container">
                     <i class="fa-solid fa-circle-user"></i>
                     <div>
                         <?php
@@ -105,35 +212,33 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                         echo "</p>";
 
                         ?>
-                    </div>
-                </div>
-                <p class="post-text">
-                    <strong>Name:</strong> <?= $bio['name'] ?? '-' ?><br>
-                    <strong>DOB:</strong> <?= $bio['dob'] ?? '-' ?><br>
-                    <strong>Age:</strong> <?= $bio['age'] ?? '-' ?><br>
-                    <strong>Facebook:</strong> <?= $bio['facebook'] ?? '-' ?><br>
-                    <strong>Instagram:</strong> <?= $bio['instagram'] ?? '-' ?>
-                </p>
-            </div>
-        </div>
 
-        <div class="profile-info">
+	                <p class="post-text">
+	                    <strong>Name:</strong> <?= $bio['name'] ?? '-' ?><br>
+	                    <strong>DOB:</strong> <?= $bio['dob'] ?? '-' ?><br>
+	                    <strong>Age:</strong> <?= $bio['age'] ?? '-' ?><br>
+	                    <strong>Facebook:</strong> <?= $bio['facebook'] ?? '-' ?><br>
+	                    <strong>Instagram:</strong> <?= $bio['instagram'] ?? '-' ?>
+	                </p>
+	            </div>
+        	</div>
+	    </div>
+	</div>
+        <div class="row">
 
-            <div class="info-col">
-                <div class="profile-intro">
-                    <div class="title-box">
-                        <h3>Following</h3>
-                    </div>
+            <div class="col-lg-4">
+                <div class="sidebar-container">
+                    <h5>Following</h5>
 
                     <?php
-                    
-                    echo "<div class='friends-box'>";
 
                     // RETRIEVE USERNAMES OF PEOPLE USER IS FOLLOWING
                     // will use foreach loop to retrieve each username of the items in the logged in User's follower array
                     // REF for foreach loop w/ arrays: https://www.php.net/manual/en/control-structures.foreach.php
                     // REF for pulling logged in User object data from Mongo: https://stackoverflow.com/questions/26716035/display-mongodb-collections-using-html-file
                     $following = $user['following'];
+
+                    echo "<div class='friends-box'>";
 
                     foreach ($following as $document) {
 
@@ -151,14 +256,14 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     echo "</div>";
                     ?>
                 </div>
-                <div class="profile-intro">
-                    <div class="title-box">
-                        <h3>Favorite Tracks</h3>
-                    </div>
-                    <!-- <p>RETRIEVE TRACKS FROM USER_LIBRARY DATABASE</p> -->
-                    <?php
-                    echo "<div class='friends-box'>";
 
+                <div class="sidebar-container mb-3">
+                    <div class="d-flex justify-content-center-between align-items-center mb-2">
+                        <h5>Favorite Tracks</h5>
+                    </div>
+		    <!-- <p>RETRIEVE ARTISTS FROM USER_LIBRARY DATABASE</p> -->
+                    <?php
+                    echo "<div class='friends-box'>"; 
                     // will use foreach loop to retrieve each track of the items in the logged in User's favoriteTracks
                     $favoriteTracks = $user['library']['favoriteTracks'];
                     // $favTrackTitle = json_encode($favoriteTracks['title']);
@@ -179,11 +284,12 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     echo "</div>";
                     ?>
                 </div>
-                <div class="profile-intro">
-                    <div class="title-box">
-                        <h3>Favorite Artists</h3>
+
+                <div class="sidebar-container mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>Favorite Artists</h5>
                     </div>
-                    <!-- <p>RETRIEVE ARTISTS FROM USER_LIBRARY DATABASE</p> -->
+		    <!-- <p>RETRIEVE ARTISTS FROM USER_LIBRARY DATABASE</p> -->
                     <div class="friends-box">
                         <!-- if statement that adds users to box when user has followers/friends -->
                         <?php
@@ -208,11 +314,12 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                         ?>
                     </div>
                 </div>
-                <div class="profile-intro">
-                    <div class="title-box">
-                        <h3>Favorite Albums</h3>
+
+                <div class="sidebar-container mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5>Favorite Albums</h5>
                     </div>
-                    <!-- <p>RETRIEVE ALBUMS FROM USER_LIBRARY DATABASE</p> -->
+		    <!-- <p>RETRIEVE ALBUMS FROM USER_LIBRARY DATABASE</p> -->
                     <div class="friends-box">
                         <!-- if statement that adds users to box when user has followers/friends -->
                         <?php
@@ -238,13 +345,15 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                         ?>
                     </div>
                 </div>
+
             </div>
-            <div class="post-col">
+
+            <div class="col-lg-8">
                 <!-- commented out the write post container because searchBar.php will be implemented from kate, so media and content can be populated and inserted on that page instead -->
 
                 <!-- <div class="write-post-container">
                     <div class="user-profile">
-                        <i class="fa-solid fa-circle-user"></i>                    
+                        <i class="fa-solid fa-circle-user"></i>
                     </div>
 
                 </div> -->
@@ -258,17 +367,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                         continue;
                     }
 
-                    echo "<div class='post-container'>";
-                    echo "<div class='post-row'>";
-                    echo "<div class='user-profile'>";
-                    echo "<i class='fa-solid fa-circle-user'>";
-                    echo "</i>";
-                    // <!-- will modify to user icons instead of images -->
-                    echo "<div>";
-                    // <!-- <p>RETRIEVE USERNAME FROM POST DATABASE</p> -->
-
-                    echo "<p>";
-
                     // RETRIEVE USERNAME BY LOOKING UP STORED SESSION KEY
                     $username = $user['username'];
 
@@ -279,11 +377,10 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                     $media = $document->media;
                     $content = $document->content;
                     $postedAt = $document->postedAt;
-
-		    // ratings which will allow for more similarly rated items
+            // ratings which will allow for more similarly rated items
                     $rating = $document->rating; // will read the user's rating of the content and display the corresponding amount of stars
 
-		    // different cases to handle rating value and hold the HTML for numbner of stars
+           // different cases to handle rating value and hold the HTML for numbner of stars
                     switch ($rating) {
                         case 1:
                             $stars = "
@@ -304,8 +401,12 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
                                      ";
                             break;
                     }
-
-
+		    echo "<div class='post-container'>";
+		    echo "<div class='post-row'>";
+		    echo "<div class='user-profile''>";
+		    echo "<i class='fa-solid fa-circle-user'></i>";
+	            echo "<div style='flex:1'>";
+		    echo "<p>";
                     echo $username;
 
                     echo "</p>";
@@ -333,10 +434,7 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
 
                     echo "</div>";
                     echo "</div>";
-                    echo "<a href='#'>";
-                    echo "<i class='fas fa-ellipsis-v'></i></a>";
                     echo "</div>";
-
                     echo "</div>";
                 };
                 ?>
@@ -348,6 +446,6 @@ if (!isset($_COOKIE['SessionKey'])) { // WEB REFERENCE USED: https://www.geeksfo
         <p>&copy SocialTune, Inc. All rights reserved.</p>
     </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>
